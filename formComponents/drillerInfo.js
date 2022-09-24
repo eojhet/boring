@@ -78,7 +78,7 @@ export default function DrillerInfo() {
           <input name="company" type="text"/>
         </div>
         <div className={styles.formRow}>
-          <label for="equip">Equipement: </label>
+          <label for="equip">Equipment: </label>
           <input name="equip" type="text"/>
         </div>
       </form>
