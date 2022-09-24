@@ -1,9 +1,8 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.scss'
+import DrillerInfo from '../formComponents/drillerInfo'
+import styles from '/styles/Home.module.scss'
 
 export default function Home() {
-
 
   return (
     <div className={styles.container}>
@@ -14,14 +13,18 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1>Welcome to the Boring App!</h1>
-        <p>This is where I hope you'll be able to enter data for boring logs and have a graphical representation spit back out at you!</p>
+        <div className={styles.title}>
+          <h1>Welcome to the Boring App!</h1>
+          <p>This is where I hope you'll be able to enter data for boring logs and have a graphical representation spit back out at you!</p>
+        </div>
+        
+        <DrillerInfo />
 
       </main>
 
       <footer className={styles.footer}>
         <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://www.eojhet.com"
           target="_blank"
           rel="noopener noreferrer"
         >
