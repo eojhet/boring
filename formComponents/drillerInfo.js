@@ -31,7 +31,11 @@ export default function DrillerInfo() {
       let layerDesc = `layerDesc${i}`
       layerElements.push(
         <div key={i} className={styles.formRow}>
-           <div className={styles.formCol}>
+          <div className={styles.formCol}>
+            <label>Layer: </label>
+            <label>{i+1}</label>
+          </div>
+          <div className={styles.formCol}>
             <label htmlFor="layerDepth">Depth (feet): </label>
 
             <input name="layerDepth" type="number" value={data[layerDepth]} onChange={e=>setData(data => ({
