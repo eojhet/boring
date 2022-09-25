@@ -1,55 +1,91 @@
 import styles from '/styles/Home.module.scss'
 import { useState } from 'react';
-import Select from "react-select";
+import BoringLog from './boringLog';
 
-export default function DrillerInfo() {
+export default function DrillerInfo({}) {
   const [subLayers, setSubLayers] = useState(1);
   const [data, setData] = useState({});
-  const layerElements = [];
+  const [depth, setDepth] = useState([]);
+  const [depthTotal, setDepthTotal] = useState([0]);
+  const [type, setType] = useState([]);
+  const [desc, setDesc] = useState([]);
 
-  // const layerOptions = [
-  //   { value: 'clay', label: 'Clay' },
-  //   { value: 'sandyClay', label: 'Sandy Clay' },
-  //   { value: 'gravellyClay', label: 'Gravelly Clay' },
-  //   { value: 'silt', label: 'Silt' },
-  //   { value: 'sandySilt', label: 'Sandy Silt' },
-  //   { value: 'gravellySilt', label: 'Gravelly Silt' },
-  //   { value: 'sand', label: 'Sand' },
-  //   { value: 'gravel', label: 'Gravel' }
-  // ]
+  const layerElements = [];
 
   function newLayer(e) {
     e.preventDefault();
     setSubLayers(subLayers + 1);
   }  
 
+  function delLayer(e) {
+    e.preventDefault();
+    if (subLayers > 1) {
+      setSubLayers(subLayers - 1);
+      let tempType = [...type];
+      tempType.pop();
+      setType(tempType);
+      let tempDepth = [...depth];
+      tempDepth.pop();
+      setDepth(tempDepth);
+      let tempDepthTotal = [...depthTotal];
+      tempDepthTotal.pop();
+      setDepthTotal(tempDepthTotal);
+      let tempDesc = [...desc];
+      tempDesc.pop();
+      setDesc([...tempDesc]);
+    }
+  }
+
+  const updateType = index => e => {
+    let tempType = [...type];
+    tempType[index] = e.target.value;
+    setType(tempType);
+  }
+
+  const updateDepth = index => e => {
+    let tempDepth = [...depth];
+    tempDepth[index] = e.target.value;
+    setDepth(tempDepth);
+    let tempDepthTotal = [...depthTotal];
+    for (let i = index; i < depth.length; i++) {
+      tempDepthTotal[i+1] = tempDepth[i];
+    }
+    setDepthTotal(tempDepthTotal);
+  }
+
+  const updateDesc = index => e => {
+    let tempDesc = [...desc];
+    tempDesc[index] = e.target.value;
+    setDesc(tempDesc);
+  }
+
   function subSurface() {
     
     for (let i = 0; i < subLayers; i++){
-      let layerDepth = `layerDepth${i}`
-      let layerType = `layerType${i}`
-      let layerDesc = `layerDesc${i}`
+
       layerElements.push(
         <div key={i} className={styles.formRow}>
-          <div className={styles.formCol}>
+          {/* LAYER NUMBER */}
+          <div>
             <label>Layer: </label>
             <label>{i+1}</label>
           </div>
+          {/* DEPTH FROM */}
           <div className={styles.formCol}>
-            <label htmlFor="layerDepth">Depth (feet): </label>
+            <label>Depth From: </label>
+            <label>{depthTotal[i]}</label>
+          </div>
+          {/* DEPTH TO */}
+          <div className={styles.formCol}>
+            <label htmlFor="layerDepth">Depth To: </label>
 
-            <input name="layerDepth" type="number" value={data[layerDepth]} onChange={e=>setData(data => ({
-            ...data,
-            [layerDepth] : e.target.value
-            }))}/>
+            <input name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={depth[i]} onChange={updateDepth(i)}/>
 
           </div>
+          {/* TYPE */}
           <div className={styles.formCol}>
             <label htmlFor="layerType">Type: </label>
-            <select name="layerType" value={data[layerType]} onChange={e=>setData(data => ({
-              ...data,
-              [layerType] : e.target.value
-            }))}>
+            <select name="layerType" value={type[i]} onChange={updateType(i)}>
               <option value="chooseOne">Choose One:</option>
               <option value="clay">Clay</option>
               <option value="sandyClay">Sandy Clay</option>
@@ -62,12 +98,10 @@ export default function DrillerInfo() {
               <option value="topSoil">Top Soil</option>
             </select>
           </div>
+          {/* DESCRIPTION */}
           <div className={styles.formCol}>
             <label htmlFor="layerDesc">Description: </label>
-            <textarea name="layerDesc" type="text" value={data[layerDesc]} onChange={e=>setData(data => ({
-            ...data,
-            [layerDesc] : e.target.value
-            }))}/>
+            <textarea name="layerDesc" type="text" value={desc[i]} onChange={updateDesc(i)}/>
           </div>
         </div>
       )
@@ -77,6 +111,7 @@ export default function DrillerInfo() {
       <form className={styles.form}>
         {layerElements}
         <button onClick={newLayer}>New Row</button>
+        <button onClick={delLayer}>Delete Row</button>
       </form>
     )
   }
@@ -114,6 +149,13 @@ export default function DrillerInfo() {
         </div>
       </form>
       {subSurface()}
+      <BoringLog
+        data={data}
+        depth={depth}
+        type={type}
+        desc={desc}
+        subLayers={subLayers}
+      />
     </div>
   );
 }

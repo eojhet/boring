@@ -1,8 +1,11 @@
 import Head from 'next/head'
+import { useState } from 'react';
+import BoringLog from '../formComponents/boringLog'
 import DrillerInfo from '../formComponents/drillerInfo'
 import styles from '/styles/Home.module.scss'
 
 export default function Home() {
+  const [test, setTest] = useState({0:1,1:2,2:3});
 
   return (
     <div className={styles.container}>
@@ -18,7 +21,7 @@ export default function Home() {
           <p>This is where I hope you'll be able to enter data for boring logs and have a graphical representation spit back out at you!</p>
         </div>
         
-        <DrillerInfo />
+        <DrillerInfo test={test}/>
 
       </main>
 
