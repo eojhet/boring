@@ -5,27 +5,35 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
   const layerDepth = [];
 
     const layerOptions = {
-      'clay': 'Clay',
-      'sandyClay': 'Sandy Clay',
-      'gravellyClay': 'Gravelly Clay',
-      'sand': 'Sand',
-      'silt': 'Silt',
-      'sandySilt': 'Sandy Silt',
-      'gravellySilt': 'Gravelly Silt',
-      'gravel': 'Gravel',
       'topSoil': 'Top Soil',
+      'clay': 'Clay',
+      'siltyClay': 'Silty Clay',
+      'sandyClay': 'Sandy Clay',
+      'silt': 'Silt',
+      'claySilt': 'Clay Silt',
+      'sandySilt': 'Sandy Silt',
+      'sand': 'Sand',
+      'claySand': 'Clay Sand',
+      'siltySand': 'Silty Sand',
+      'gravel': 'Gravel',
+      'siltyGravel': 'Silty Gravel',
+      'sandyGravel': 'Sandy Gravel',
     }
-
+  
     const layerColors = {
-      'clay': 'FireBrick',
-      'sandyClay': 'IndianRed',
-      'gravellyClay': 'SlateBlue',
-      'sand': 'DarkKhaki',
+      'topSoil': 'FireBrick',
+      'clay': 'IndianRed',
+      'siltyClay': 'SlateBlue',
+      'sandyClay': 'DarkKhaki',
       'silt': 'MediumAquamarine',
-      'sandySilt': 'LimeGreen',
-      'gravellySilt': 'CornflowerBlue',
-      'gravel': 'MidnightBlue',
-      'topSoil': 'Brown',
+      'claySilt': 'LimeGreen',
+      'sandySilt': 'CornflowerBlue',
+      'sand': 'MidnightBlue',
+      'claySand': 'Brown',
+      'siltySand': 'Pink',
+      'gravel': 'Orange',
+      'siltyGravel': 'Purple',
+      'sandyGravel': 'Gray',
     }
 
   function segment() {
@@ -38,9 +46,7 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
         <div key={i}>
           <div className="segment">
             <div className="depth">{depthTotal[i] ?depthTotal[i]:0} ft</div>
-            <div className="box">
-              {layerOptions[type[i]]}
-            </div>
+            <div className="box" />
             <div className="desc">
               {desc[i]}
             </div>
@@ -63,6 +69,8 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
               border: 1px solid #eaeaea;
               text-align: center;
               line-height: ${depth[i] >= 1 ? 3 : 1.5};
+              background-image: url("patterns/diamond.svg");
+              background-repeat: repeat;
             }
             .desc{
               width: 25rem;

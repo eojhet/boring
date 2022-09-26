@@ -86,15 +86,19 @@ export default function DrillerInfo({}) {
             <label className={styles.label} htmlFor="layerType">Type: </label>
             <select className={styles.input} name="layerType" value={type[i]} onChange={updateType(i)}>
               <option value="chooseOne">Choose One:</option>
-              <option value="clay">Clay</option>
-              <option value="sandyClay">Sandy Clay</option>
-              <option value="gravellyClay">Gravelly Clay</option>
-              <option value="sand">Sand</option>
-              <option value="silt">Silt</option>
-              <option value="sandySilt">Sandy Silt</option>
-              <option value="gravellySilt">Gravelly Silt</option>
-              <option value="gravel">Gravel</option>
               <option value="topSoil">Top Soil</option>
+              <option value="clay">Clay</option>
+              <option value="siltyClay">Silty Clay</option>
+              <option value="sandyClay">Sandy Clay</option>
+              <option value="silt">Silt</option>
+              <option value="claySilt">Clay Silt</option>
+              <option value="sandySilt">Sandy Silt</option>
+              <option value="sand">Sand</option>
+              <option value="claySand">Clay Sand</option>
+              <option value="siltySand">Silty Sand</option>
+              <option value="gravel">Gravel</option>
+              <option value="siltyGravel">Silty Gravel</option>
+              <option value="sandyGravel">Sandy Gravel</option>
             </select>
           </div>
           {/* DESCRIPTION */}
