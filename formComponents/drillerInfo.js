@@ -9,6 +9,7 @@ export default function DrillerInfo({}) {
   const [depthTotal, setDepthTotal] = useState([]);
   const [type, setType] = useState([]);
   const [desc, setDesc] = useState([]);
+  const [allData, setAllData] = useState({});
 
   const layerElements = [];
 
@@ -34,6 +35,16 @@ export default function DrillerInfo({}) {
       tempDesc.pop();
       setDesc([...tempDesc]);
     }
+  }
+
+  function exportObject(e) {
+    e.preventDefault();
+    setAllData({
+      ...data,
+      depths: depth,
+      types: type,
+      descriptions: desc
+    });
   }
 
   const updateType = index => e => {
@@ -116,6 +127,7 @@ export default function DrillerInfo({}) {
         <div>
           <button onClick={newLayer}>New Row</button>
           <button onClick={delLayer}>Delete Row</button>
+          <button onClick={exportObject}>Export</button>
         </div>
       </form>
     )
@@ -124,13 +136,15 @@ export default function DrillerInfo({}) {
   return (
     <div>
       <form className={styles.form}>
+
         <div className={styles.formRow}>
-          <label className={styles.infoLabel} htmlFor="dateD">Date Drilled: </label>
-          <input className={styles.infoInput} name="dateD" type="date" value={data.date} onChange={e=>setData(data => ({
+          <label className={styles.infoLabel} htmlFor="label">Boring Label: </label>
+          <input className={styles.infoInput} name="label" type="text" value={data.label} onChange={e=>setData(data => ({
             ...data,
-            "date": e.target.value
-          }))} />
+            "label": e.target.value
+            }))}/>
         </div>
+
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="logBy">Logged By: </label>
           <input className={styles.infoInput} name="logBy" type="text" value={data.logBy} onChange={e=>setData(data => ({
@@ -138,6 +152,7 @@ export default function DrillerInfo({}) {
             "logBy": e.target.value
             }))}/>
         </div>
+
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="company">Company: </label>
           <input className={styles.infoInput} name="company" type="text" value={data.company} onChange={e=>setData(data => ({
@@ -145,6 +160,15 @@ export default function DrillerInfo({}) {
             "company": e.target.value
             }))}/>
         </div>
+
+        <div className={styles.formRow}>
+          <label className={styles.infoLabel} htmlFor="location">Location: </label>
+          <input className={styles.infoInput} name="location" type="text" value={data.location} onChange={e=>setData(data => ({
+            ...data,
+            "location": e.target.value
+            }))}/>
+        </div>
+
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="equip">Equipment: </label>
           <input className={styles.infoInput} name="equip" type="text" value={data.equip} onChange={e=>setData(data => ({
@@ -152,7 +176,25 @@ export default function DrillerInfo({}) {
             "equip": e.target.value
             }))}/>
         </div>
+
+        <div className={styles.formRow}>
+          <label className={styles.infoLabel} htmlFor="date">Date: </label>
+          <input className={styles.infoInput} name="date" type="date" value={data.date} onChange={e=>setData(data => ({
+            ...data,
+            "date": e.target.value
+            }))}/>
+        </div>
+
+        <div className={styles.formRow}>
+          <label className={styles.infoLabel} htmlFor="time">Time: </label>
+          <input className={styles.infoInput} name="time" type="time" value={data.time} onChange={e=>setData(data => ({
+            ...data,
+            "time": e.target.value
+            }))}/>
+        </div>
+
       </form>
+
       {subSurface()}
       <BoringLog
         data={data}
@@ -162,6 +204,10 @@ export default function DrillerInfo({}) {
         subLayers={subLayers}
         depthTotal={depthTotal}
       />
+      
+      <div>{allData ? JSON.stringify(allData) : ""}</div>
+      <div>&nbsp;</div>
+      
     </div>
   );
 }

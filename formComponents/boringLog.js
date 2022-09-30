@@ -46,7 +46,7 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
         <div key={i}>
           <div className="segment">
             <div className="depth">{depthTotal[i] ?depthTotal[i]:0} ft</div>
-            <div className="box" />
+            <div className="box">{layerOptions[type[i]]}</div>
             <div className="desc">
               {desc[i]}
             </div>
@@ -69,8 +69,8 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
               border: 1px solid #eaeaea;
               text-align: center;
               line-height: ${depth[i] >= 1 ? 3 : 1.5};
-              background-image: url("patterns/diamond.svg");
-              background-repeat: repeat;
+              /* background-image: url("patterns/diamond.svg");
+              background-repeat: repeat; */
             }
             .desc{
               width: 25rem;
