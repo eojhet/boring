@@ -47,6 +47,45 @@ export default function DrillerInfo({}) {
     });
   }
 
+  function createPDF(e) {
+    e.preventDefault();
+    setAllData({
+      ...data,
+      depths: depth,
+      types: type,
+      descriptions: desc
+    });
+
+    fetch(`http://${process.env.NEXT_PUBLIC_API_HOST}:${process.env.NEXT_PUBLIC_API_PORT}/boring`, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(allData),
+    }).then(response => {
+      if (response.ok) {
+        let data = response;
+        if (response.headers.get('Content-Type').indexOf('application/json') > -1) {
+          data = response.json();
+        }
+        return data;
+      }
+      return Promise.reject(response);
+    }).then (response => response.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${data.label} - ${data.location}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    }).catch(error => {
+      console.log(error);
+    })
+  }
+
   const updateType = index => e => {
     let tempType = [...type];
     tempType[index] = e.target.value;
@@ -127,7 +166,8 @@ export default function DrillerInfo({}) {
         <div>
           <button onClick={newLayer}>New Row</button>
           <button onClick={delLayer}>Delete Row</button>
-          <button onClick={exportObject}>Export</button>
+          <button onClick={exportObject}>Export JSON Object</button>
+          <button onClick={createPDF}>Create PDF</button>
         </div>
       </form>
     )
