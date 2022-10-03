@@ -37,7 +37,7 @@ export default function DrillerInfo({}) {
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `${data.id} - ${data.location}`);
+        link.setAttribute('download', `${data.id} - ${data.location}.pdf`);
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link);
