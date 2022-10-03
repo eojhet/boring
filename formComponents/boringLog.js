@@ -45,7 +45,7 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
       layerDepth.push(
         <div key={i}>
           <div className="segment">
-            <div className="depth">{depthTotal[i] ?depthTotal[i]:0} ft</div>
+            <div className="depth">{depthTotal[i] ? depthTotal[i] : 0} ft</div>
             <div className="box">{layerOptions[type[i]]}</div>
             <div className="desc">
               {desc[i]}
@@ -68,7 +68,7 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
               background-color: ${layerColors[type[i]]};
               border: 1px solid #eaeaea;
               text-align: center;
-              line-height: ${depth[i] >= 1 ? 3 : 1.5};
+              /* line-height: ${depth[i] >= 1 ? 3 : 1.5}; */
               /* background-image: url("patterns/diamond.svg");
               background-repeat: repeat; */
             }

@@ -16,9 +16,20 @@
     margin: 0.5rem;
     padding: 0.4rem;
     box-shadow: 4px 4px 1px #333;
+    background-color: #eee;
     cursor: pointer;
   }
 
+  select {
+    background-color: #eee;
+    border-radius: 4px;
+  }
+
+  input {
+    padding: 0.2rem;
+    background-color: #eaeaea;
+    border: 1px solid #999;
+  }
 
   .main {
     min-height: 100vh;
