@@ -16,7 +16,7 @@ export default function DrillerInfo({}) {
 
   useEffect(() => {
     if (checkDocument()) {
-      fetch(`http://${process.env.NEXT_PUBLIC_API_HOST}:${process.env.NEXT_PUBLIC_API_PORT}/boring`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOST}:${process.env.NEXT_PUBLIC_API_PORT}/boring`, {
         method: 'POST',
         mode: 'cors',
         headers: {
