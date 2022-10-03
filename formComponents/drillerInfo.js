@@ -16,7 +16,7 @@ export default function DrillerInfo({}) {
 
   useEffect(() => {
     if (checkDocument()) {
-      fetch(`${process.env.NEXT_PUBLIC_API_PROTOCOL}://${process.env.NEXT_PUBLIC_API_HOST}:${process.env.NEXT_PUBLIC_API_PORT}/boring`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_URI}`, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -88,7 +88,8 @@ export default function DrillerInfo({}) {
   }
 
   const checkDocument = () => {
-    console.log(JSON.stringify({...data, depths: depth, types: type, descriptions: desc}));
+    // console.log(JSON.stringify({...data, depths: depth, types: type, descriptions: desc}));
+    // console.log(`${process.env.NEXT_PUBLIC_API_URI}`);
     if ((type.length !== depth.length) || (desc.length > depth.length)){
       setAlert("Ensure that all boring depth and soil type fields are filled out.");
       return false;
@@ -98,10 +99,11 @@ export default function DrillerInfo({}) {
     } else {
       for (let i = 0; i < depth.length - 1; i++) {
         if (parseFloat(depth[i]) >= parseFloat(depth[i+1])){
-          setAlert("Check each layer depth is deeper than the one before it.")
+          setAlert("Check each layer depth is deeper than the one before it.");
           return false;
         }
       }
+      setAlert(" ");
       return true;
     }
   }
