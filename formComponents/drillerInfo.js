@@ -111,23 +111,26 @@ export default function DrillerInfo({}) {
   const fillEmpties = () => {
     for (let i = 0; i < type.length; i++) {
       if (!desc[i]) {
-        desc[i] = " ";
+        desc[i] = "";
       }
     }
+    if (!data.siteName) {
+      data.siteName = "";
+    }
     if (!data.logBy) {
-      data.logBy = " ";
+      data.logBy = "";
     }
     if (!data.company) {
-      data.company = " ";
+      data.company = "";
     }
     if (!data.equip) {
-      data.equip = " ";
+      data.equip = "";
     }
     if (!data.date) {
-      data.date = " ";
+      data.date = "";
     }
     if (!data.time) {
-      data.time = " ";
+      data.time = "";
     }
   }
 
@@ -235,6 +238,14 @@ export default function DrillerInfo({}) {
           <input className={styles.infoInput} name="location" type="text" value={data.location} placeholder="required" onChange={e=>setData(data => ({
             ...data,
             "location": e.target.value
+            }))}/>
+        </div>
+
+        <div className={styles.formRow}>
+          <label className={styles.infoLabel} htmlFor="siteName">Site Name: </label>
+          <input className={styles.infoInput} name="siteName" type="text" value={data.siteName} onChange={e=>setData(data => ({
+            ...data,
+            "siteName": e.target.value
             }))}/>
         </div>
 
