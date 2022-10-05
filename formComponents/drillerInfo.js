@@ -4,48 +4,26 @@ import BoringLog from './boringLog';
 
 export default function DrillerInfo({}) {
   const [subLayers, setSubLayers] = useState(1);
-  const [data, setData] = useState({});
-  const [depth, setDepth] = useState([]);
-  const [depthTotal, setDepthTotal] = useState([0]);
-  const [type, setType] = useState([]);
-  const [desc, setDesc] = useState([]);
-  const [allData, setAllData] = useState({});
   const [alert, setAlert] = useState("");
+  const [depthTotal, setDepthTotal] = useState([0]);
+
+
+  const [allData, setAllData] = useState({
+    id: "",
+    location: "",
+    siteName: "",
+    logBy: "",
+    company: "",
+    equip: "",
+    date: "",
+    time: "",
+    depths: [],
+    types: [],
+    descriptions: [],
+  });
+
 
   const layerElements = [];
-
-  useEffect(() => {
-    if (checkDocument()) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URI}`, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(allData),
-      }).then(response => {
-        if (response.ok) {
-          let data = response;
-          if (response.headers.get('Content-Type').indexOf('application/json') > -1) {
-            data = response.json();
-          }
-          return data;
-        }
-        return Promise.reject(response);
-      }).then (response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `${data.id} - ${data.location}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-      }).catch(error => {
-        console.log(error);
-      })
-    }
-  },[allData])
 
   function newLayer(e) {
     e.preventDefault();
@@ -56,18 +34,27 @@ export default function DrillerInfo({}) {
     e.preventDefault();
     if (subLayers > 1) {
       setSubLayers(subLayers - 1);
-      let tempType = [...type];
+      let tempType = [...allData.types];
       tempType.pop();
-      setType(tempType);
-      let tempDepth = [...depth];
+      setAllData({
+        ...allData,
+        types: tempType,
+      });
+      let tempDepth = [...allData.depths];
       tempDepth.pop();
-      setDepth(tempDepth);
+      setAllData({
+        ...allData,
+        depths: tempDepth,
+      });
       let tempDepthTotal = [...depthTotal];
       tempDepthTotal.pop();
       setDepthTotal(tempDepthTotal);
-      let tempDesc = [...desc];
+      let tempDesc = [...allData.descriptions];
       tempDesc.pop();
-      setDesc([...tempDesc]);
+      setAllData({
+        ...allData,
+        descriptions: tempDesc,
+      });
     }
   }
 
@@ -76,29 +63,53 @@ export default function DrillerInfo({}) {
 
     if (checkDocument()) {
       fillEmpties();
-      setAllData({
-        ...data,
-        depths: depth,
-        types: type,
-        descriptions: desc
-      });      
+
+      fetch(`${process.env.NEXT_PUBLIC_API_URI}`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(allData),
+      }).then(response => {
+        if (response.ok) {
+          let res = response;
+          if (response.headers.get('Content-Type').indexOf('application/json') > -1) {
+            res = response.json();
+          }
+          return res;
+        }
+        return Promise.reject(response);
+      }).then (response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${allData.id} - ${allData.location}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+      }).catch(error => {
+        console.log(error);
+      })
+
     } else {
       console.log("Fix issues before proceeding");
     }
   }
 
   const checkDocument = () => {
-    // console.log(JSON.stringify({...data, depths: depth, types: type, descriptions: desc}));
+    console.log(JSON.stringify({...allData}));
     // console.log(`${process.env.NEXT_PUBLIC_API_URI}`);
-    if ((type.length !== depth.length) || (desc.length > depth.length)){
+    if ((allData.types.length !== allData.depths.length) || (allData.descriptions.length > allData.depths.length)){
       setAlert("Ensure that all boring depth and soil type fields are filled out.");
       return false;
-    } else if (!data.id || !data.location){
+    } else if (!allData.id || !allData.location){
       setAlert("Ensure that Boring ID and Location fields are filled out.");
       return false;
     } else {
-      for (let i = 0; i < depth.length - 1; i++) {
-        if (parseFloat(depth[i]) >= parseFloat(depth[i+1])){
+      for (let i = 0; i < allData.depths.length - 1; i++) {
+        if (parseFloat(allData.depths[i]) >= parseFloat(allData.depths[i+1])){
           setAlert("Check each layer depth is deeper than the one before it.");
           return false;
         }
@@ -109,52 +120,66 @@ export default function DrillerInfo({}) {
   }
 
   const fillEmpties = () => {
-    for (let i = 0; i < type.length; i++) {
-      if (!desc[i]) {
-        desc[i] = "";
+    let tempAllData = {...allData};
+    for (let i = 0; i < tempAllData.depths.length; i++) {
+
+      if (!tempAllData.descriptions[i]) {
+        tempAllData.descriptions[i] = "";
       }
     }
-    if (!data.siteName) {
-      data.siteName = "";
+
+    if (!tempAllData.siteName) {
+      tempAllData.siteName = "";
     }
-    if (!data.logBy) {
-      data.logBy = "";
+    if (!tempAllData.logBy) {
+      tempAllData.logBy = "";
     }
-    if (!data.company) {
-      data.company = "";
+    if (!tempAllData.company) {
+      tempAllData.company = "";
     }
-    if (!data.equip) {
-      data.equip = "";
+    if (!tempAllData.equip) {
+      tempAllData.equip = "";
     }
-    if (!data.date) {
-      data.date = "";
+    if (!tempAllData.date) {
+      tempAllData.date = "";
     }
-    if (!data.time) {
-      data.time = "";
+    if (!tempAllData.time) {
+      tempAllData.time = "";
     }
+
+    setAllData({...tempAllData});
   }
 
   const updateType = index => e => {
-    let tempType = [...type];
+    let tempType = [...allData.types];
     tempType[index] = e.target.value;
-    setType(tempType);
+    setAllData({
+      ...allData,
+      types: tempType,
+    });
   }
 
   const updateDepth = index => e => {
-    let tempDepth = [...depth];
+    let tempDepth = [...allData.depths];
     tempDepth[index] = e.target.value;
-    setDepth(tempDepth);
+    setAllData({
+      ...allData,
+      depths: tempDepth
+    })
     let tempDepthTotal = [...depthTotal];
-    for (let i = index; i < depth.length; i++) {
+    for (let i = index; i < allData.depths.length; i++) {
       tempDepthTotal[i+1] = tempDepth[i];
     }
     setDepthTotal(tempDepthTotal);
   }
 
   const updateDesc = index => e => {
-    let tempDesc = [...desc];
+    let tempDesc = [...allData.descriptions];
     tempDesc[index] = e.target.value;
-    setDesc(tempDesc);
+    setAllData({
+      ...allData,
+      descriptions: tempDesc,
+    })
   }
 
   function subSurface() {
@@ -163,26 +188,30 @@ export default function DrillerInfo({}) {
 
       layerElements.push(
         <div key={i} className={styles.formRow}>
+
           {/* LAYER NUMBER */}
           <div className={styles.formCol}>
             <label className={styles.label}>Layer</label>
             <div className={styles.center}>{i+1}</div>
           </div>
+
           {/* DEPTH FROM */}
           <div className={styles.formCol}>
             <label className={styles.label}>From </label>
             <label className={styles.center}>{i == 0 ? 0 : depthTotal[i]}</label>
           </div>
+
           {/* DEPTH TO */}
           <div className={styles.formCol}>
             <label className={styles.label} htmlFor="layerDepth">To: </label>
-            <input className={styles.input} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={depth[i]} placeholder="required" 
-              onBlur={(e) => depth[i] ? e.target.style.backgroundColor="white" : e.target.style.backgroundColor="red"} onChange={updateDepth(i)}/>
+            <input className={styles.input} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
+              onBlur={(e) => allData.depths[i] ? e.target.style.backgroundColor="white" : e.target.style.backgroundColor="red"} onChange={updateDepth(i)}/>
           </div>
+
           {/* TYPE */}
           <div className={styles.formCol}>
             <label className={styles.label} htmlFor="layerType">Type: </label>
-            <select className={styles.input} name="layerType" value={type[i]} onBlur={(e) => {type[i] ? e.target.style.backgroundColor="#eaeaea" : e.target.style.backgroundColor="red"}} onChange={updateType(i)}>
+            <select className={styles.input} name="layerType" value={allData.types[i]} onBlur={(e) => {allData.types[i] ? e.target.style.backgroundColor="#eaeaea" : e.target.style.backgroundColor="red"}} onChange={updateType(i)}>
               <option value="chooseOne">Choose One:</option>
               <option value="topSoil">Top Soil</option>
               <option value="clay">Clay</option>
@@ -199,10 +228,11 @@ export default function DrillerInfo({}) {
               <option value="sandyGravel">Sandy Gravel</option>
             </select>
           </div>
+
           {/* DESCRIPTION */}
           <div className={styles.formCol}>
             <label className={styles.label} htmlFor="layerDesc">Description: </label>
-            <textarea className={styles.desc}  name="layerDesc" type="text" value={desc[i]} onChange={updateDesc(i)}/>
+            <textarea className={styles.desc}  name="layerDesc" type="text" value={allData.descriptions[i]} onChange={updateDesc(i)}/>
           </div>
         </div>
       )
@@ -224,69 +254,70 @@ export default function DrillerInfo({}) {
   return (
     <div>
       <form className={styles.form}>
+        <div><h2>Basic Info: </h2></div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="label">Boring ID: </label>
-          <input className={styles.infoInput} name="label" type="text" value={data.id} placeholder="required" onChange={e=>setData(data => ({
-            ...data,
-            "id": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="label" type="text" value={allData.id} placeholder="required" onChange={e=>setAllData({
+            ...allData,
+            id: e.target.value,
+          })}/>
         </div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="location">Location: </label>
-          <input className={styles.infoInput} name="location" type="text" value={data.location} placeholder="required" onChange={e=>setData(data => ({
-            ...data,
-            "location": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="location" type="text" value={allData.location} placeholder="required" onChange={e=>setAllData({
+            ...allData,
+            location: e.target.value,
+          })}/>
         </div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="siteName">Site Name: </label>
-          <input className={styles.infoInput} name="siteName" type="text" value={data.siteName} onChange={e=>setData(data => ({
-            ...data,
-            "siteName": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="siteName" type="text" value={allData.siteName} onChange={e=>setAllData({
+            ...allData,
+            siteName: e.target.value,
+          })}/>
         </div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="logBy">Logged By: </label>
-          <input className={styles.infoInput} name="logBy" type="text" value={data.logBy} onChange={e=>setData(data => ({
-            ...data,
-            "logBy": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="logBy" type="text" value={allData.logBy} onChange={e=>setAllData({
+            ...allData,
+            logBy: e.target.value,
+          })}/>
         </div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="company">Company: </label>
-          <input className={styles.infoInput} name="company" type="text" value={data.company} onChange={e=>setData(data => ({
-            ...data,
-            "company": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="company" type="text" value={allData.company} onChange={e=>setAllData({
+            ...allData,
+            company: e.target.value,
+          })}/>
         </div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="equip">Equipment: </label>
-          <input className={styles.infoInput} name="equip" type="text" value={data.equip} onChange={e=>setData(data => ({
-            ...data,
-            "equip": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="equip" type="text" value={allData.equip} onChange={e=>setAllData({
+            ...allData,
+            equip: e.target.value,
+          })}/>
         </div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="date">Date: </label>
-          <input className={styles.infoInput} name="date" type="date" value={data.date} onChange={e=>setData(data => ({
-            ...data,
-            "date": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="date" type="date" value={allData.date} onChange={e=>setAllData({
+            ...allData,
+            date: e.target.value,
+          })}/>
         </div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="time">Time: </label>
-          <input className={styles.infoInput} name="time" type="time" value={data.time} onChange={e=>setData(data => ({
-            ...data,
-            "time": e.target.value
-            }))}/>
+          <input className={styles.infoInput} name="time" type="time" value={allData.time} onChange={e=>setAllData({
+            ...allData,
+            time: e.target.value,
+          })}/>
         </div>
 
       </form>
@@ -294,10 +325,9 @@ export default function DrillerInfo({}) {
       {subSurface()}
 
       <BoringLog
-        data={data}
-        depth={depth}
-        type={type}
-        desc={desc}
+        depth={allData.depths}
+        type={allData.types}
+        desc={allData.descriptions}
         subLayers={subLayers}
         depthTotal={depthTotal}
       />
