@@ -2,9 +2,12 @@
 
   h1 {
     padding: 1rem;
-    border: 1px solid #333;
     border-radius: 6px;
-    box-shadow: 4px 4px 1px #333;
+    // border: 1px solid #333;
+    box-shadow: 4px 4px 0 #999;
+    // box-shadow: 4px 4px 1px #333;
+    background-color: rgb(0, 146, 110);
+
   }
 
   button {
@@ -13,7 +16,8 @@
     border-radius: 6px;
     margin: 0.5rem;
     padding: 0.4rem;
-    box-shadow: 4px 4px 1px #333;
+    // box-shadow: 4px 4px 1px #333;
+    box-shadow: 4px 4px 0 #999;
     background-color: #eee;
     cursor: pointer;
   }
@@ -60,8 +64,10 @@
       padding: 0.2rem 0.5rem;
       border: 1px solid #333;
       border-radius: 4px;
-      box-shadow: 4px 4px 5px #333;
-      background-color: rgb(0, 228, 171);
+      box-shadow: 4px 4px 0 #999;
+      // box-shadow: 4px 4px 5px #333;
+      background-color: rgb(0, 146, 110);
+      // background-color: rgb(0, 228, 171);
 
   
       .infoLabel {

@@ -7,7 +7,6 @@ export default function DrillerInfo({}) {
   const [alert, setAlert] = useState("");
   const [depthTotal, setDepthTotal] = useState([0]);
 
-
   const [allData, setAllData] = useState({
     id: "",
     location: "",
@@ -22,7 +21,6 @@ export default function DrillerInfo({}) {
     descriptions: [],
   });
 
-
   const layerElements = [];
 
   function newLayer(e) {
@@ -34,27 +32,18 @@ export default function DrillerInfo({}) {
     e.preventDefault();
     if (subLayers > 1) {
       setSubLayers(subLayers - 1);
-      let tempType = [...allData.types];
-      tempType.pop();
+
+      let tempAllData = {...allData};
+      tempAllData.depths[subLayers - 1] ? tempAllData.depths.pop() : null;
+      tempAllData.types[subLayers - 1] ? tempAllData.types.pop() : null;
+      tempAllData.descriptions.pop();
       setAllData({
-        ...allData,
-        types: tempType,
+        ...tempAllData,
       });
-      let tempDepth = [...allData.depths];
-      tempDepth.pop();
-      setAllData({
-        ...allData,
-        depths: tempDepth,
-      });
+
       let tempDepthTotal = [...depthTotal];
       tempDepthTotal.pop();
       setDepthTotal(tempDepthTotal);
-      let tempDesc = [...allData.descriptions];
-      tempDesc.pop();
-      setAllData({
-        ...allData,
-        descriptions: tempDesc,
-      });
     }
   }
 
@@ -99,7 +88,7 @@ export default function DrillerInfo({}) {
   }
 
   const checkDocument = () => {
-    console.log(JSON.stringify({...allData}));
+    // console.log(JSON.stringify({...allData}));
     // console.log(`${process.env.NEXT_PUBLIC_API_URI}`);
     if ((allData.types.length !== allData.depths.length) || (allData.descriptions.length > allData.depths.length)){
       setAlert("Ensure that all boring depth and soil type fields are filled out.");
@@ -122,12 +111,10 @@ export default function DrillerInfo({}) {
   const fillEmpties = () => {
     let tempAllData = {...allData};
     for (let i = 0; i < tempAllData.depths.length; i++) {
-
       if (!tempAllData.descriptions[i]) {
         tempAllData.descriptions[i] = "";
       }
     }
-
     if (!tempAllData.siteName) {
       tempAllData.siteName = "";
     }
@@ -146,7 +133,6 @@ export default function DrillerInfo({}) {
     if (!tempAllData.time) {
       tempAllData.time = "";
     }
-
     setAllData({...tempAllData});
   }
 
