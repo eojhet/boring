@@ -188,7 +188,7 @@ export default function DrillerInfo({}) {
 
       layerElements.push(
         <div key={i} className={styles.formRow}>
-
+          <div className={styles.left}>
           {/* LAYER NUMBER */}
           <div className={styles.formCol}>
             <label className={styles.label}>Layer</label>
@@ -204,14 +204,14 @@ export default function DrillerInfo({}) {
           {/* DEPTH TO */}
           <div className={styles.formCol}>
             <label className={styles.label} htmlFor="layerDepth">To: </label>
-            <input className={styles.input} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
+            <input className={styles.boringInput} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
               onBlur={(e) => allData.depths[i] ? e.target.style.backgroundColor="white" : e.target.style.backgroundColor="red"} onChange={updateDepth(i)}/>
           </div>
 
           {/* TYPE */}
           <div className={styles.formCol}>
             <label className={styles.label} htmlFor="layerType">Type: </label>
-            <select className={styles.input} name="layerType" value={allData.types[i]} onBlur={(e) => {allData.types[i] ? e.target.style.backgroundColor="#eaeaea" : e.target.style.backgroundColor="red"}} onChange={updateType(i)}>
+            <select className={styles.boringInput} name="layerType" value={allData.types[i]} onBlur={(e) => {allData.types[i] ? e.target.style.backgroundColor="#eaeaea" : e.target.style.backgroundColor="red"}} onChange={updateType(i)}>
               <option value="chooseOne">Choose One:</option>
               <option value="topSoil">Top Soil</option>
               <option value="clay">Clay</option>
@@ -228,13 +228,18 @@ export default function DrillerInfo({}) {
               <option value="sandyGravel">Sandy Gravel</option>
             </select>
           </div>
+          </div>
 
           {/* DESCRIPTION */}
-          <div className={styles.formCol}>
-            <label className={styles.label} htmlFor="layerDesc">Description: </label>
-            <textarea className={styles.desc}  name="layerDesc" type="text" value={allData.descriptions[i]} onChange={updateDesc(i)}/>
+          <div className={styles.descContainer}>
+            <div className={styles.formCol}>
+            
+              <label className={styles.label} htmlFor="layerDesc">Description: </label>
+              <textarea className={styles.desc}  name="layerDesc" type="text" value={allData.descriptions[i]} onChange={updateDesc(i)}/>
+            </div>
           </div>
         </div>
+
       )
     }
 
@@ -331,9 +336,7 @@ export default function DrillerInfo({}) {
         subLayers={subLayers}
         depthTotal={depthTotal}
       />
-      
-      <div>&nbsp;</div>
-      
+            
     </div>
   );
 }
