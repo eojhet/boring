@@ -55,6 +55,7 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
             .segment{
                 display:flex;
                 flex-direction:row;
+
               }
             .depth{
               width: 4rem;
@@ -76,6 +77,13 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
               width: 25rem;
               border-top: 1px dotted #eaeaea;
               padding-left: 1rem;
+              word-wrap: break-word;
+            }
+
+            @media only screen and (max-width: 700px){
+              .desc {
+                width: calc(100vw - 11rem);
+              }
             }
           `}</style>
         </div>
@@ -92,31 +100,42 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
     <div className="container">
       {segment()}
       <div className="bottom">
-        <div className="bottomLeft">
+        <div className="bottomLeft" />
+        <div className="logDepth">
           {depth.length > 0 ? depth[depth.length-1] + ' ft' : ''}
         </div>
         <div className="bottomRight">&nbsp;</div>
       </div>      
       <style jsx>{`
         .container {
-          margin: 2rem 0;
+          margin: 1rem 0 4rem 0;
           display:flex;
           flex-direction: column;
           align-items: center;
-          min-height: 100vh;
+          min-height: 100vh;          
+          
         }
         .bottom{
           display:flex;
           flex-direction:row;
-          gap: 1rem;
           margin-top: 0.5rem;
+
         }
         .bottomLeft {
+          width: 4rem;
+        }
+        .logDepth {
           width: 6rem;
           text-align: center;
         }
         .bottomRight {
-          width: 20rem;
+          width: 25rem;
+        }
+
+        @media only screen and (max-width: 700px) {
+          .bottomRight {
+            width: calc(100vw - 11rem);
+          }
         }
       `}</style>
     </div>

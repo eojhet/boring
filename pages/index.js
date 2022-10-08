@@ -14,7 +14,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <div className={styles.title}>
-          <h1>Welcome to the Boring App!</h1>
+          <h1>The Boring App</h1>
           <p>{`Please enter boring log information below then hit "Create PDF" when finished.`}</p>
         </div>
         

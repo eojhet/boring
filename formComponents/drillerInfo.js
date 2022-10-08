@@ -232,7 +232,7 @@ export default function DrillerInfo({}) {
     return (
       <form className={styles.form}>
         {layerElements}
-        <div>
+        <div className={styles.buttonContainer}>
           <button onClick={newLayer}>New Row</button>
           <button onClick={delLayer}>Delete Row</button>
           <button onClick={createPDF}>Create PDF</button>
