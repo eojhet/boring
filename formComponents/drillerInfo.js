@@ -1,11 +1,13 @@
 import styles from '/styles/Home.module.scss'
-import { useEffect, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import BoringLog from './boringLog';
 
 export default function DrillerInfo({}) {
   const [subLayers, setSubLayers] = useState(1);
   const [alert, setAlert] = useState("");
   const [depthTotal, setDepthTotal] = useState([0]);
+  const boringRef = useRef(null);
+  const infoRef = useRef(null);
 
   const [allData, setAllData] = useState({
     id: "",
@@ -21,12 +23,17 @@ export default function DrillerInfo({}) {
     descriptions: [],
   });
 
+  useEffect(() => {
+    let depthArray = boringRef.current.querySelectorAll('input[name=layerDepth]');
+    depthArray[depthArray.length - 1].focus();
+  }, [subLayers])
+
   const layerElements = [];
 
   function newLayer(e) {
     e.preventDefault();
     setSubLayers(subLayers + 1);
-  }  
+  }
 
   function delLayer(e) {
     e.preventDefault();
@@ -89,7 +96,9 @@ export default function DrillerInfo({}) {
 
   const checkDocument = () => {
     // console.log(JSON.stringify({...allData}));
-    // console.log(`${process.env.NEXT_PUBLIC_API_URI}`);
+    
+    crawl();
+  
     if ((allData.types.length !== allData.depths.length) || (allData.descriptions.length > allData.depths.length)){
       setAlert("Ensure that all boring depth and soil type fields are filled out.");
       return false;
@@ -105,6 +114,19 @@ export default function DrillerInfo({}) {
       }
       setAlert(" ");
       return true;
+    }
+  }
+
+  const crawl = () => {
+    const layerDepths = boringRef.current.querySelectorAll('input[name=layerDepth]');
+    const layerTypes = boringRef.current.querySelectorAll('select[name=layerType]');
+
+    infoRef.current.querySelector('input[name=label]').focus();
+    infoRef.current.querySelector('input[name=location]').focus();
+    
+    for (let i = 0; i < layerDepths.length; i++) {
+      layerTypes[i].focus();
+      layerDepths[i].focus();
     }
   }
 
@@ -175,51 +197,51 @@ export default function DrillerInfo({}) {
       layerElements.push(
         <div key={i} className={styles.formRow}>
           <div className={styles.left}>
-          {/* LAYER NUMBER */}
-          <div className={styles.formCol}>
-            <label className={styles.label}>Layer</label>
-            <div className={styles.center}>{i+1}</div>
-          </div>
 
-          {/* DEPTH FROM */}
-          <div className={styles.formCol}>
-            <label className={styles.label}>From </label>
-            <label className={styles.center}>{i == 0 ? 0 : depthTotal[i]}</label>
-          </div>
+            {/* LAYER NUMBER */}
+            <div className={styles.formCol}>
+              <label className={styles.label}>Layer</label>
+              <div className={styles.center}>{i+1}</div>
+            </div>
 
-          {/* DEPTH TO */}
-          <div className={styles.formCol}>
-            <label className={styles.label} htmlFor="layerDepth">To: </label>
-            <input className={styles.boringInput} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
-              onBlur={(e) => allData.depths[i] ? e.target.style.backgroundColor="white" : e.target.style.backgroundColor="red"} onChange={updateDepth(i)}/>
-          </div>
+            {/* DEPTH FROM */}
+            <div className={styles.formCol}>
+              <label className={styles.label}>From </label>
+              <label className={styles.center}>{i == 0 ? 0 : depthTotal[i]}</label>
+            </div>
 
-          {/* TYPE */}
-          <div className={styles.formCol}>
-            <label className={styles.label} htmlFor="layerType">Type: </label>
-            <select className={styles.boringInput} name="layerType" value={allData.types[i]} onBlur={(e) => {allData.types[i] ? e.target.style.backgroundColor="#eaeaea" : e.target.style.backgroundColor="red"}} onChange={updateType(i)}>
-              <option value="chooseOne">Choose One:</option>
-              <option value="topSoil">Top Soil</option>
-              <option value="clay">Clay</option>
-              <option value="siltyClay">Silty Clay</option>
-              <option value="sandyClay">Sandy Clay</option>
-              <option value="silt">Silt</option>
-              <option value="claySilt">Clay Silt</option>
-              <option value="sandySilt">Sandy Silt</option>
-              <option value="sand">Sand</option>
-              <option value="claySand">Clay Sand</option>
-              <option value="siltySand">Silty Sand</option>
-              <option value="gravel">Gravel</option>
-              <option value="siltyGravel">Silty Gravel</option>
-              <option value="sandyGravel">Sandy Gravel</option>
-            </select>
-          </div>
+            {/* DEPTH TO */}
+            <div className={styles.formCol}>
+              <label className={styles.label} htmlFor="layerDepth">To: </label>
+              <input className={styles.boringInput} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
+                onBlur={(e) => allData.depths[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateDepth(i)}/>
+            </div>
+
+            {/* TYPE */}
+            <div className={styles.formCol}>
+              <label className={styles.label} htmlFor="layerType">Type: </label>
+              <select className={styles.boringInput} name="layerType" value={allData.types[i]} onBlur={(e) => allData.types[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateType(i)}>
+                <option value="">Choose One:</option>
+                <option value="topSoil">Top Soil</option>
+                <option value="clay">Clay</option>
+                <option value="siltyClay">Silty Clay</option>
+                <option value="sandyClay">Sandy Clay</option>
+                <option value="silt">Silt</option>
+                <option value="claySilt">Clay Silt</option>
+                <option value="sandySilt">Sandy Silt</option>
+                <option value="sand">Sand</option>
+                <option value="claySand">Clay Sand</option>
+                <option value="siltySand">Silty Sand</option>
+                <option value="gravel">Gravel</option>
+                <option value="siltyGravel">Silty Gravel</option>
+                <option value="sandyGravel">Sandy Gravel</option>
+              </select>
+            </div>
           </div>
 
           {/* DESCRIPTION */}
           <div className={styles.descContainer}>
             <div className={styles.formCol}>
-            
               <label className={styles.label} htmlFor="layerDesc">Description: </label>
               <textarea className={styles.desc}  name="layerDesc" type="text" value={allData.descriptions[i]} onChange={updateDesc(i)}/>
             </div>
@@ -230,7 +252,7 @@ export default function DrillerInfo({}) {
     }
 
     return (
-      <form className={styles.form}>
+      <form ref={boringRef} className={styles.form}>
         {layerElements}
         <div className={styles.buttonContainer}>
           <button onClick={newLayer}>New Row</button>
@@ -244,12 +266,12 @@ export default function DrillerInfo({}) {
 
   return (
     <div>
-      <form className={styles.form}>
+      <form ref={infoRef} className={styles.form}>
         <div><h2>Basic Info: </h2></div>
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="label">Boring ID: </label>
-          <input className={styles.infoInput} name="label" type="text" value={allData.id} placeholder="required" onChange={e=>setAllData({
+          <input className={styles.infoInput} onBlur={(e) => allData.id ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} name="label" type="text" value={allData.id} placeholder="required" onChange={e=>setAllData({
             ...allData,
             id: e.target.value,
           })}/>
@@ -257,7 +279,7 @@ export default function DrillerInfo({}) {
 
         <div className={styles.formRow}>
           <label className={styles.infoLabel} htmlFor="location">Location: </label>
-          <input className={styles.infoInput} name="location" type="text" value={allData.location} placeholder="required" onChange={e=>setAllData({
+          <input className={styles.infoInput} onBlur={(e) => allData.location ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} name="location" type="text" value={allData.location} placeholder="required" onChange={e=>setAllData({
             ...allData,
             location: e.target.value,
           })}/>
