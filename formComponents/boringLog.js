@@ -70,8 +70,8 @@ export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) 
               border: 1px solid #eaeaea;
               text-align: center;
               /* line-height: ${depth[i] >= 1 ? 3 : 1.5}; */
-              /* background-image: url("patterns/diamond.svg");
-              background-repeat: repeat; */
+              background-image: url("patterns/${type[i]}.svg");
+              background-repeat: repeat;
             }
             .desc{
               width: 25rem;

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="40" height="40" version="1.1" viewBox="0 0 10.6 10.6" xmlns="http://www.w3.org/2000/svg">
+ <g display="none">
+  <g fill="none" stroke="#000" stroke-width=".265px">
+   <path d="M -1.325,11.925 7.95,2.65"/>
+   <path d="m2.65 11.925 5.3-5.3"/>
+   <path d="m7.95-1.325-5.3 5.3"/>
+   <path d="m2.65 0-5.3 5.3"/>
+   <path d="m13.25 3.975-5.3 5.3"/>
+  </g>
+  <g stroke-dasharray="2.15445, 2.15445" stroke-linejoin="round" stroke-width=".359075">
+   <circle cx="1.9875" cy="1.9875" r=".6625"/>
+   <circle cx="4.6375" cy="4.6375" r=".6625"/>
+   <circle cx="7.2875" cy="1.9875" r=".6625"/>
+   <circle cx=".6625" cy="7.2875" r=".6625"/>
+   <circle cx="9.9375" cy="4.6375" r=".6625"/>
+   <circle cx="3.3125" cy="8.6125" r=".6625"/>
+   <circle cx="7.2875" cy="7.155" r=".6625"/>
+   <circle cx="9.9375" cy="9.9375" r=".6625" display="inline"/>
+  </g>
+ </g>
+ <g stroke-dasharray="2.15445, 2.15445" stroke-linejoin="round" stroke-width=".359075">
+  <circle cx="1.06" cy="1.06" r=".265"/>
+  <circle cx="2.385" cy="2.385" r=".265"/>
+  <circle cx="6.36" cy="1.06" r=".265"/>
+  <circle cx="7.685" cy="2.385" r=".265"/>
+  <circle cx="2.915" cy="7.685" r=".265"/>
+  <circle cx="5.035" cy="6.89" r=".265"/>
+  <circle cx="9.54" cy="5.565" r=".265"/>
+  <circle cx="10.335" cy="6.36" r=".265"/>
+  <circle cx="1.06" cy="9.01" r=".265"/>
+  <circle cx="9.54" cy="2.915" r=".265"/>
+  <circle cx="6.36" cy="3.71" r=".265"/>
+  <circle cx="7.685" cy="5.035" r=".265"/>
+  <circle cx="1.59" cy="4.24" r=".265"/>
+  <circle cx="8.215" cy="8.215" r=".265"/>
+  <circle cx="5.035" cy="9.275" r=".265"/>
+  <circle cx="5.035" cy="1.59" r=".265"/>
+  <circle cx="9.01" cy=".795" r=".265"/>
+  <circle cx="3.445" cy="4.77" r=".265"/>
+  <circle cx=".795" cy="5.83" r=".265"/>
+  <circle cx="9.01" cy="9.54" r=".265"/>
+  <circle cx="6.625" cy="7.95" r=".265"/>
+  <circle cx="6.625" cy="5.83" r=".265"/>
+  <circle cx="4.24" cy="2.65" r=".265"/>
+ </g>
+ <g fill="none" stroke="#000" stroke-linejoin="round" stroke-width=".359075">
+  <ellipse cx="1.325" cy=".53" rx="1.325" ry=".53"/>
+  <ellipse cx="3.18" cy="1.59" rx="1.325" ry=".53"/>
+  <ellipse cx="1.1925" cy="2.385" rx=".6625" ry=".795"/>
+  <ellipse cx="2.12" cy="4.1075" rx="1.325" ry=".6625"/>
+  <ellipse cx="4.24" cy="3.3125" rx="1.325" ry=".9275"/>
+  <ellipse cx="5.1675" cy="1.1925" rx=".6625" ry=".9275"/>
+  <ellipse cx="7.95" cy="1.4575" rx="2.12" ry=".6625"/>
+  <ellipse cx="6.095" cy="2.65" rx=".795" ry=".53"/>
+  <ellipse cx="1.9875" cy="9.01" rx="1.7225" ry=".795"/>
+  <ellipse cx="4.9025" cy="9.9375" rx=".9275" ry=".3975"/>
+  <ellipse cx="4.6375" cy="8.48" rx=".6625" ry=".795"/>
+  <ellipse cx="7.95" cy="8.3475" rx="2.385" ry=".9275"/>
+  <ellipse cx="8.745" cy="9.9375" rx=".795" ry=".3975"/>
+  <ellipse cx="2.385" cy="5.6975" rx="1.59" ry=".9275"/>
+  <ellipse cx="1.59" cy="7.42" rx="1.06" ry=".53"/>
+  <ellipse cx="5.565" cy="6.095" rx=".795" ry="1.59"/>
+  <ellipse cx="7.5525" cy="4.505" rx="1.4575" ry=".795"/>
+  <ellipse cx="9.01" cy="3.0475" rx="1.325" ry=".6625"/>
+  <circle cx="8.215" cy="6.36" r=".795"/>
+  <ellipse cx="9.805" cy="6.2275" rx=".53" ry=".9275"/>
+ </g>
+</svg>
