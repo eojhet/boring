@@ -3,12 +3,6 @@ import { useState, useRef, useEffect } from 'react';
 import BoringLog from './boringLog';
 
 export default function DrillerInfo({}) {
-  const [subLayers, setSubLayers] = useState(1);
-  const [alert, setAlert] = useState("");
-  const [depthTotal, setDepthTotal] = useState([0]);
-  const boringRef = useRef(null);
-  const infoRef = useRef(null);
-
   const [allData, setAllData] = useState({
     id: "",
     location: "",
@@ -22,6 +16,13 @@ export default function DrillerInfo({}) {
     types: [],
     descriptions: [],
   });
+  const [loadObj, setLoadObj] = useState("");
+  const [objLabel, setObjLabel] = useState("");
+  const [alert, setAlert] = useState("");
+  const [depthTotal, setDepthTotal] = useState([0]);
+  const boringRef = useRef(null);
+  const infoRef = useRef(null);
+  const [subLayers, setSubLayers] = useState(allData.depths.length > 1 ? allData.depths.length : 1);
 
   useEffect(() => {
     let depthArray = boringRef.current.querySelectorAll('input[name=layerDepth]');
@@ -95,7 +96,7 @@ export default function DrillerInfo({}) {
   }
 
   const checkDocument = () => {
-    // console.log(JSON.stringify({...allData}));
+    console.log(JSON.stringify({...allData}));
     
     crawl();
   
@@ -174,9 +175,13 @@ export default function DrillerInfo({}) {
       ...allData,
       depths: tempDepth
     })
+    updateDepthTotal(index);
+  }
+
+  const updateDepthTotal = (index) => {
     let tempDepthTotal = [...depthTotal];
-    for (let i = index; i < allData.depths.length; i++) {
-      tempDepthTotal[i+1] = tempDepth[i];
+    for (let i = index ? index : 0; i < allData.depths.length; i++) {
+      tempDepthTotal[i+1] = allData.depths[i];
     }
     setDepthTotal(tempDepthTotal);
   }
@@ -260,8 +265,27 @@ export default function DrillerInfo({}) {
           <button onClick={createPDF}>Create PDF</button>
         </div>
         <div><b>{alert}</b></div>
+        <div className={styles.buttonContainer}>
+          <input type="text" value={loadObj} onChange={(e) => {setLoadObj(e.target.value)}}></input>
+          <button onClick={handleLoad}>Load</button>
+          <label>{objLabel}</label>
+        </div>
       </form>
     )
+  }
+
+  const handleLoad = (e) => {
+    e.preventDefault();
+    try {
+      let newObj = JSON.parse(loadObj);
+      setAllData(newObj);
+      setSubLayers(newObj.depths.length);
+      updateDepthTotal();
+      setObjLabel("Data Loaded");
+    } catch (error) {
+      setObjLabel("Not a valid object");
+      console.error(error);
+    }
   }
 
   return (
