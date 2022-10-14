@@ -1,143 +1,266 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react";
+import GraphicalBoringLog from "./graphicalBoringLog";
+import styles from '/styles/Home.module.scss'
 
+export default function BoringLog({allData, setAllData, infoRef}) {
+  const [subLayers, setSubLayers] = useState(1);
+  const [alert, setAlert] = useState("");
+  const [depthTotal, setDepthTotal] = useState([0]);
 
-export default function BoringLog({data,depth,type,desc,subLayers, depthTotal}) {
-  const layerDepth = [];
-
-    const layerOptions = {
-      'topSoil': 'Top Soil',
-      'clay': 'Clay',
-      'siltyClay': 'Silty Clay',
-      'sandyClay': 'Sandy Clay',
-      'silt': 'Silt',
-      'claySilt': 'Clay Silt',
-      'sandySilt': 'Sandy Silt',
-      'sand': 'Sand',
-      'claySand': 'Clay Sand',
-      'siltySand': 'Silty Sand',
-      'gravel': 'Gravel',
-      'siltyGravel': 'Silty Gravel',
-      'sandyGravel': 'Sandy Gravel',
-    }
+  const boringRef = useRef(null);
   
-    const layerColors = {
-      'topSoil': 'FireBrick',
-      'clay': 'IndianRed',
-      'siltyClay': 'SlateBlue',
-      'sandyClay': 'DarkKhaki',
-      'silt': 'MediumAquamarine',
-      'claySilt': 'LimeGreen',
-      'sandySilt': 'CornflowerBlue',
-      'sand': 'MidnightBlue',
-      'claySand': 'Brown',
-      'siltySand': 'Pink',
-      'gravel': 'Orange',
-      'siltyGravel': 'Purple',
-      'sandyGravel': 'Gray',
-    }
+  const layerElements = [];
+  
+  useEffect(() => {
+    let depthArray = boringRef.current.querySelectorAll('input[name=layerDepth]');
+    depthArray[depthArray.length - 1].focus();
+  }, [subLayers])
 
-  function segment() {
-    if (layerDepth.length > subLayers){
-      layerDepth.pop();
+
+  function newLayer(e) {
+    e.preventDefault();
+    setSubLayers(subLayers + 1);
+  }
+
+  function delLayer(e) {
+    e.preventDefault();
+    if (subLayers > 1) {
+      setSubLayers(subLayers - 1);
+
+      let tempAllData = {...allData};
+      tempAllData.depths[subLayers - 1] ? tempAllData.depths.pop() : null;
+      tempAllData.types[subLayers - 1] ? tempAllData.types.pop() : null;
+      tempAllData.descriptions.pop();
+      setAllData({
+        ...tempAllData,
+      });
+
+      let tempDepthTotal = [...depthTotal];
+      tempDepthTotal.pop();
+      setDepthTotal(tempDepthTotal);
     }
+  }
+
+  function createPDF(e) {
+    e.preventDefault();
+
+    if (checkDocument()) {
+      fillEmpties();
+
+      fetch(`${process.env.NEXT_PUBLIC_API_URI}`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(allData),
+      }).then(response => {
+        if (response.ok) {
+          let res = response;
+          if (response.headers.get('Content-Type').indexOf('application/json') > -1) {
+            res = response.json();
+          }
+          return res;
+        }
+        return Promise.reject(response);
+      }).then (response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${allData.id} - ${allData.location}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+      }).catch(error => {
+        console.log(error);
+      })
+
+    } else {
+      console.log("Fix issues before proceeding");
+    }
+  }
+
+  
+  const checkDocument = () => {
+    console.log(JSON.stringify({...allData}));
     
-    for (let i = 0; i < depth.length; i++) {
-      layerDepth.push(
-        <div key={i}>
-          <div className="segment">
-            <div className="depth">{depthTotal[i] ? depthTotal[i] : 0} ft</div>
-            <div className="box">{layerOptions[type[i]]}</div>
-            <div className="desc">
-              {desc[i]}
+    crawl();
+  
+    if ((allData.types.length !== allData.depths.length) || (allData.descriptions.length > allData.depths.length)){
+      setAlert("Ensure that all boring depth and soil type fields are filled out.");
+      return false;
+    } else if (!allData.id || !allData.location){
+      setAlert("Ensure that Boring ID and Location fields are filled out.");
+      return false;
+    } else {
+      for (let i = 0; i < allData.depths.length - 1; i++) {
+        if (parseFloat(allData.depths[i]) >= parseFloat(allData.depths[i+1])){
+          setAlert("Check each layer depth is deeper than the one before it.");
+          return false;
+        }
+      }
+      setAlert(" ");
+      return true;
+    }
+  }
+
+  const crawl = () => {
+    const layerDepths = boringRef.current.querySelectorAll('input[name=layerDepth]');
+    const layerTypes = boringRef.current.querySelectorAll('select[name=layerType]');
+
+    infoRef.current.querySelector('input[name=label]').focus();
+    infoRef.current.querySelector('input[name=location]').focus();
+    
+    for (let i = 0; i < layerDepths.length; i++) {
+      layerTypes[i].focus();
+      layerDepths[i].focus();
+    }
+  }
+
+  const fillEmpties = () => {
+    let tempAllData = {...allData};
+    for (let i = 0; i < tempAllData.depths.length; i++) {
+      if (!tempAllData.descriptions[i]) {
+        tempAllData.descriptions[i] = "";
+      }
+    }
+    if (!tempAllData.siteName) {
+      tempAllData.siteName = "";
+    }
+    if (!tempAllData.logBy) {
+      tempAllData.logBy = "";
+    }
+    if (!tempAllData.company) {
+      tempAllData.company = "";
+    }
+    if (!tempAllData.equip) {
+      tempAllData.equip = "";
+    }
+    if (!tempAllData.date) {
+      tempAllData.date = "";
+    }
+    if (!tempAllData.time) {
+      tempAllData.time = "";
+    }
+    setAllData({...tempAllData});
+  }
+  
+  const updateType = index => e => {
+    let tempType = [...allData.types];
+    tempType[index] = e.target.value;
+    setAllData({
+      ...allData,
+      types: tempType,
+    });
+  }
+
+  const updateDepth = index => e => {
+    let tempDepth = [...allData.depths];
+    tempDepth[index] = e.target.value;
+    setAllData({
+      ...allData,
+      depths: tempDepth
+    })
+    let tempDepthTotal = [...depthTotal];
+    for (let i = index; i < allData.depths.length; i++) {
+      tempDepthTotal[i+1] = tempDepth[i];
+    }
+    setDepthTotal(tempDepthTotal);
+  }
+
+  const updateDesc = index => e => {
+    let tempDesc = [...allData.descriptions];
+    tempDesc[index] = e.target.value;
+    setAllData({
+      ...allData,
+      descriptions: tempDesc,
+    })
+  }
+
+  function subSurface() {
+    
+    for (let i = 0; i < subLayers; i++){
+
+      layerElements.push(
+        <div key={i} className={styles.formRow}>
+          <div className={styles.left}>
+
+            {/* LAYER NUMBER */}
+            <div className={styles.formCol}>
+              <label className={styles.label}>Layer</label>
+              <div className={styles.center}>{i+1}</div>
+            </div>
+
+            {/* DEPTH FROM */}
+            <div className={styles.formCol}>
+              <label className={styles.label}>From </label>
+              <label className={styles.center}>{i == 0 ? 0 : depthTotal[i]}</label>
+            </div>
+
+            {/* DEPTH TO */}
+            <div className={styles.formCol}>
+              <label className={styles.label} htmlFor="layerDepth">To: </label>
+              <input className={styles.boringInput} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
+                onBlur={(e) => allData.depths[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateDepth(i)}/>
+            </div>
+
+            {/* TYPE */}
+            <div className={styles.formCol}>
+              <label className={styles.label} htmlFor="layerType">Type: </label>
+              <select className={styles.boringInput} name="layerType" value={allData.types[i]} onBlur={(e) => allData.types[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateType(i)}>
+                <option value="">Choose One:</option>
+                <option value="topSoil">Top Soil</option>
+                <option value="clay">Clay</option>
+                <option value="siltyClay">Silty Clay</option>
+                <option value="sandyClay">Sandy Clay</option>
+                <option value="silt">Silt</option>
+                <option value="claySilt">Clay Silt</option>
+                <option value="sandySilt">Sandy Silt</option>
+                <option value="sand">Sand</option>
+                <option value="claySand">Clay Sand</option>
+                <option value="siltySand">Silty Sand</option>
+                <option value="gravel">Gravel</option>
+                <option value="siltyGravel">Silty Gravel</option>
+                <option value="sandyGravel">Sandy Gravel</option>
+              </select>
             </div>
           </div>
-          <style jsx>{`
-            .segment{
-                display:flex;
-                flex-direction:row;
 
-              }
-            .depth{
-              width: 4rem;
-              border-top: 1px dotted #eaeaea;
-              text-align: right;
-              padding-right: 1rem;
-            }
-            .box{
-              width: 6rem;
-              height: ${(i > 0 ? depth[i] - depth[i-1] : depth[i])*3}rem;
-              background-color: ${layerColors[type[i]]};
-              border: 1px solid #eaeaea;
-              text-align: center;
-              /* line-height: ${depth[i] >= 1 ? 3 : 1.5}; */
-              background-image: ${type[i] ? "url(patterns/" + type[i] + ".svg)" : ""};
-              background-repeat: repeat;
-            }
-            .desc{
-              width: 25rem;
-              border-top: 1px dotted #eaeaea;
-              padding-left: 1rem;
-              word-wrap: break-word;
-            }
-
-            @media only screen and (max-width: 700px){
-              .desc {
-                width: calc(100vw - 11rem);
-              }
-            }
-          `}</style>
+          {/* DESCRIPTION */}
+          <div className={styles.descContainer}>
+            <div className={styles.formCol}>
+              <label className={styles.label} htmlFor="layerDesc">Description: </label>
+              <textarea className={styles.desc}  name="layerDesc" type="text" value={allData.descriptions[i]} onChange={updateDesc(i)}/>
+            </div>
+          </div>
         </div>
+
       )
     }
 
     return (
-      <div>{layerDepth}</div>
+      <form ref={boringRef} className={styles.form}>
+        {layerElements}
+        <div className={styles.buttonContainer}>
+          <button onClick={newLayer}>New Row</button>
+          <button onClick={delLayer}>Delete Row</button>
+          <button onClick={createPDF}>Create PDF</button>
+        </div>
+        <div><b>{alert}</b></div>
+      </form>
     )
   }
   
-
   return (
-    <div className="container">
-      {segment()}
-      <div className="bottom">
-        <div className="bottomLeft" />
-        <div className="logDepth">
-          {depth.length > 0 ? depth[depth.length-1] + ' ft' : ''}
-        </div>
-        <div className="bottomRight">&nbsp;</div>
-      </div>      
-      <style jsx>{`
-        .container {
-          margin: 1rem 0 4rem 0;
-          display:flex;
-          flex-direction: column;
-          align-items: center;
-          min-height: 100vh;          
-          
-        }
-        .bottom{
-          display:flex;
-          flex-direction:row;
-          margin-top: 0.5rem;
-
-        }
-        .bottomLeft {
-          width: 4rem;
-        }
-        .logDepth {
-          width: 6rem;
-          text-align: center;
-        }
-        .bottomRight {
-          width: 25rem;
-        }
-
-        @media only screen and (max-width: 700px) {
-          .bottomRight {
-            width: calc(100vw - 11rem);
-          }
-        }
-      `}</style>
+    <div>
+      {subSurface()}
+      
+      <GraphicalBoringLog
+        allData={allData}
+        subLayers={subLayers}
+        depthTotal={depthTotal}
+      />
     </div>
   )
 }
