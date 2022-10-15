@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 
-export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
+export default function GraphicalConstructionLog({allData, subLayers, depthTotal}) {
   const layerDepth = [];
 
     const layerOptions = {
@@ -21,9 +21,9 @@ export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
     }
   
     const layerColors = {
-      'topSoil': 'FireBrick',
-      'clay': 'IndianRed',
-      'siltyClay': 'SlateBlue',
+      'backFill': 'FireBrick',
+      'seal': 'SlateBlue',
+      'filterPack': 'DarkKhaki',
       'sandyClay': 'DarkKhaki',
       'silt': 'MediumAquamarine',
       'claySilt': 'LimeGreen',
@@ -41,14 +41,14 @@ export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
       layerDepth.pop();
     }
     
-    for (let i = 0; i < allData.depths.length; i++) {
+    for (let i = 0; i < allData.materialDepths.length; i++) {
       layerDepth.push(
         <div key={i}>
           <div className="segment">
             <div className="depth">{depthTotal[i] ? depthTotal[i] : 0} ft</div>
-            <div className="box">{layerOptions[allData.types[i]]}</div>
+            <div className="box">{layerOptions[allData.materialTypes[i]]}</div>
             <div className="desc">
-              {allData.descriptions[i]}
+              {allData.materialDescriptions[i]}
             </div>
           </div>
           <style jsx>{`
@@ -64,12 +64,12 @@ export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
               padding-right: 1rem;
             }
             .box{
-              width: 6rem;
-              height: ${(i > 0 ? allData.depths[i] - allData.depths[i-1] : allData.depths[i])*3}rem;
-              background-color: ${layerColors[allData.types[i]]};
+              width: 4rem;
+              height: ${(i > 0 ? allData.materialDepths[i] - allData.materialDepths[i-1] : allData.materialDepths[i])*3}rem;
+              background-color: ${layerColors[allData.materialTypes[i]]};
               border: 1px solid #eaeaea;
               text-align: center;
-              background-image: ${allData.types[i] ? "url(patterns/" + allData.types[i] + ".svg)" : ""};
+              /* background-image: ${allData.materialTypes[i] ? "url(patterns/" + allData.materialTypes[i] + ".svg)" : ""}; */
               background-repeat: repeat;
             }
             .desc{
@@ -101,7 +101,7 @@ export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
       <div className="bottom">
         <div className="bottomLeft" />
         <div className="logDepth">
-          {allData.depths.length > 0 ? allData.depths[allData.depths.length-1] + ' ft' : ''}
+          {allData.materialDepths.length > 0 ? allData.materialDepths[allData.materialDepths.length-1] + ' ft' : ''}
         </div>
         <div className="bottomRight">&nbsp;</div>
       </div>      

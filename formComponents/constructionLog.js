@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import GraphicalBoringLog from "./graphicalBoringLog";
+import GraphicalConstructionLog from "./graphicalConstructionLog";
 import styles from '/styles/Home.module.scss'
 
 export default function ConstructionLog({allData, setAllData, infoRef}) {
@@ -285,7 +285,7 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
 
       <div className={styles.formRow}>
         <label className={styles.pipeLabel} htmlFor="screenDepth">Screen Depth: </label>
-        <input className={styles.infoInput} onBlur={(e) => allData.screenDepth ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} name="casingDepth" type="number" min={allData.casingDepth ? allData.casingDepth : 0} step="0.5" placeholder="Required" value={allData.screenDepth} onChange={e=>setAllData({
+        <input className={styles.infoInput} onBlur={(e) => allData.screenDepth ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} name="casingDepth" type="number" min={allData.casingDepth ? allData.casingDepth : 0} step="0.5" placeholder="required" value={allData.screenDepth} onChange={e=>setAllData({
             ...allData,
             screenDepth: e.target.value,
           })}/>
@@ -295,11 +295,11 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
 
       {materials()}
       
-      {/* <GraphicalBoringLog
+      <GraphicalConstructionLog
         allData={allData}
         subLayers={subLayers}
         depthTotal={depthTotal}
-      /> */}
+      />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import styles from '/styles/Home.module.scss'
 import { useState, useRef, useEffect } from 'react';
 import BoringLog from './boringLog';
-import ConstructionLog from './constructionlog';
+import ConstructionLog from './constructionLog';
 
 export default function DrillerInfo({}) {
   const [boringInput, setBoringInput] = useState(false);
