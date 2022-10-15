@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import GraphicalBoringLog from "./graphicalBoringLog";
 import styles from '/styles/Home.module.scss'
 
-export default function BoringLog({allData, setAllData, infoRef}) {
+export default function ConstructionLog({allData, setAllData, infoRef}) {
   const [subLayers, setSubLayers] = useState(1);
   const [alert, setAlert] = useState("");
   const [depthTotal, setDepthTotal] = useState([0]);
@@ -15,7 +15,7 @@ export default function BoringLog({allData, setAllData, infoRef}) {
   useEffect(() => {
     // Prevent effect from firing on initial render
     if (!initialRender.current) {
-      let depthArray = boringRef.current.querySelectorAll('input[name=layerDepth]');
+      let depthArray = boringRef.current.querySelectorAll('input[name=materialDepth]');
       depthArray[depthArray.length - 1].focus();
     } else {
       initialRender.current = false;
@@ -33,9 +33,9 @@ export default function BoringLog({allData, setAllData, infoRef}) {
       setSubLayers(subLayers - 1);
 
       let tempAllData = {...allData};
-      tempAllData.depths[subLayers - 1] ? tempAllData.depths.pop() : null;
-      tempAllData.types[subLayers - 1] ? tempAllData.types.pop() : null;
-      tempAllData.descriptions.pop();
+      tempAllData.materialDepths[subLayers - 1] ? tempAllData.materialDepths.pop() : null;
+      tempAllData.materialTypes[subLayers - 1] ? tempAllData.materialTypes.pop() : null;
+      tempAllData.materialDescriptions.pop();
       setAllData({
         ...tempAllData,
       });
@@ -92,15 +92,15 @@ export default function BoringLog({allData, setAllData, infoRef}) {
     
     crawl();
   
-    if ((allData.types.length !== allData.depths.length) || (allData.descriptions.length > allData.depths.length)){
+    if ((allData.materialTypes.length !== allData.materialDepths.length) || (allData.materialDescriptions.length > allData.materialDepths.length)){
       setAlert("Ensure that all boring depth and soil type fields are filled out.");
       return false;
     } else if (!allData.id || !allData.location){
       setAlert("Ensure that Boring ID and Location fields are filled out.");
       return false;
     } else {
-      for (let i = 0; i < allData.depths.length - 1; i++) {
-        if (parseFloat(allData.depths[i]) >= parseFloat(allData.depths[i+1])){
+      for (let i = 0; i < allData.materialDepths.length - 1; i++) {
+        if (parseFloat(allData.materialDepths[i]) >= parseFloat(allData.materialDepths[i+1])){
           setAlert("Check each layer depth is deeper than the one before it.");
           return false;
         }
@@ -111,8 +111,8 @@ export default function BoringLog({allData, setAllData, infoRef}) {
   }
 
   const crawl = () => {
-    const layerDepths = boringRef.current.querySelectorAll('input[name=layerDepth]');
-    const layerTypes = boringRef.current.querySelectorAll('select[name=layerType]');
+    const layerDepths = boringRef.current.querySelectorAll('input[name=materialDepth]');
+    const layerTypes = boringRef.current.querySelectorAll('select[name=materialType]');
 
     infoRef.current.querySelector('input[name=label]').focus();
     infoRef.current.querySelector('input[name=location]').focus();
@@ -125,9 +125,9 @@ export default function BoringLog({allData, setAllData, infoRef}) {
 
   const fillEmpties = () => {
     let tempAllData = {...allData};
-    for (let i = 0; i < tempAllData.depths.length; i++) {
-      if (!tempAllData.descriptions[i]) {
-        tempAllData.descriptions[i] = "";
+    for (let i = 0; i < tempAllData.materialDepths.length; i++) {
+      if (!tempAllData.materialDescriptions[i]) {
+        tempAllData.materialDescriptions[i] = "";
       }
     }
     if (!tempAllData.siteName) {
@@ -152,38 +152,38 @@ export default function BoringLog({allData, setAllData, infoRef}) {
   }
   
   const updateType = index => e => {
-    let tempType = [...allData.types];
+    let tempType = [...allData.materialTypes];
     tempType[index] = e.target.value;
     setAllData({
       ...allData,
-      types: tempType,
+      materialTypes: tempType,
     });
   }
 
   const updateDepth = index => e => {
-    let tempDepth = [...allData.depths];
+    let tempDepth = [...allData.materialDepths];
     tempDepth[index] = e.target.value;
     setAllData({
       ...allData,
-      depths: tempDepth
+      materialDepths: tempDepth
     })
     let tempDepthTotal = [...depthTotal];
-    for (let i = index; i < allData.depths.length; i++) {
+    for (let i = index; i < allData.materialDepths.length; i++) {
       tempDepthTotal[i+1] = tempDepth[i];
     }
     setDepthTotal(tempDepthTotal);
   }
 
   const updateDesc = index => e => {
-    let tempDesc = [...allData.descriptions];
+    let tempDesc = [...allData.materialDescriptions];
     tempDesc[index] = e.target.value;
     setAllData({
       ...allData,
-      descriptions: tempDesc,
+      materialDescriptions: tempDesc,
     })
   }
 
-  function subSurface() {
+  function materials() {
     
     for (let i = 0; i < subLayers; i++){
 
@@ -205,29 +205,19 @@ export default function BoringLog({allData, setAllData, infoRef}) {
 
             {/* DEPTH TO */}
             <div className={styles.formCol}>
-              <label className={styles.label} htmlFor="layerDepth">To</label>
-              <input className={styles.depth} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
-                onBlur={(e) => allData.depths[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateDepth(i)}/>
+              <label className={styles.label} htmlFor="materialDepth">To</label>
+              <input className={styles.depth} name="materialDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.materialDepths[i]} placeholder="required" 
+                onBlur={(e) => allData.materialDepths[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateDepth(i)}/>
             </div>
 
             {/* TYPE */}
             <div className={styles.formCol}>
-              <label className={styles.label} htmlFor="layerType">Type</label>
-              <select className={styles.boringInput} name="layerType" value={allData.types[i]} onBlur={(e) => allData.types[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateType(i)}>
+              <label className={styles.label} htmlFor="materialType">Annular Fill</label>
+              <select className={styles.boringInput} name="materialType" value={allData.materialTypes[i]} onBlur={(e) => allData.materialTypes[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateType(i)}>
                 <option value="">Choose One:</option>
-                <option value="topSoil">Top Soil</option>
-                <option value="clay">Clay</option>
-                <option value="siltyClay">Silty Clay</option>
-                <option value="sandyClay">Sandy Clay</option>
-                <option value="silt">Silt</option>
-                <option value="claySilt">Clay Silt</option>
-                <option value="sandySilt">Sandy Silt</option>
-                <option value="sand">Sand</option>
-                <option value="claySand">Clay Sand</option>
-                <option value="siltySand">Silty Sand</option>
-                <option value="gravel">Gravel</option>
-                <option value="siltyGravel">Silty Gravel</option>
-                <option value="sandyGravel">Sandy Gravel</option>
+                <option value="backFill">Back Fill</option>
+                <option value="seal">Seal</option>
+                <option value="filterPack">Filter Pack</option>
               </select>
             </div>
           </div>
@@ -235,8 +225,8 @@ export default function BoringLog({allData, setAllData, infoRef}) {
           {/* DESCRIPTION */}
           <div className={styles.descContainer}>
             <div className={styles.formCol}>
-              <label className={styles.label} htmlFor="layerDesc">Description</label>
-              <textarea className={styles.desc}  name="layerDesc" type="text" value={allData.descriptions[i]} onChange={updateDesc(i)}/>
+              <label className={styles.label} htmlFor="materialDesc">Description of Material</label>
+              <textarea className={styles.desc}  name="materialDesc" type="text" value={allData.materialDescriptions[i]} onChange={updateDesc(i)}/>
             </div>
           </div>
         </div>
@@ -246,7 +236,6 @@ export default function BoringLog({allData, setAllData, infoRef}) {
 
     return (
       <form ref={boringRef} className={styles.form}>
-        <h2>Boring Log Data: </h2>
         {layerElements}
         <div className={styles.buttonContainer}>
           <button onClick={newLayer}>New Row</button>
@@ -259,14 +248,58 @@ export default function BoringLog({allData, setAllData, infoRef}) {
   }
   
   return (
-    <div>
-      {subSurface()}
+    <div className={styles.form}>
+      <h2>Well Construction Log Data: </h2>
+
+      <div className={styles.formRow}>
+        <label className={styles.pipeLabel} htmlFor="standupHeight">Standup Height: </label>
+        <input className={styles.infoInput} name="standupHeight" type="number" min={0} step="0.5" value={allData.standupHeight} onChange={e => setAllData({
+          ...allData,
+          standupHeight: e.target.value
+        })}/>
+      </div>
+
+      <div className={styles.formRow}>
+        <label className={styles.pipeLabel} htmlFor="casingDesc">Casing Description: </label>
+        <input className={styles.infoInput} name="casingDesc" type="text" value={allData.casingDesc} onChange={e => setAllData({
+          ...allData,
+          casingDesc: e.target.value
+        })}/>
+      </div>
+
+      <div className={styles.formRow}>
+        <label className={styles.pipeLabel} htmlFor="casingDepth">Casing Depth: </label>
+        <input className={styles.infoInput} onBlur={(e) => allData.casingDepth ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} name="casingDepth" type="number" min={0} step="0.5" value={allData.casingDepth} placeholder={allData.casing ? "required" : ""} onChange={e => setAllData({
+          ...allData,
+          casingDepth: e.target.value,
+        })}/>
+      </div>
+
+      <div className={styles.formRow}>
+        <label className={styles.pipeLabel} htmlFor="screenDesc">Casing Description: </label>
+        <input className={styles.infoInput} name="screenDesc" type="text" value={allData.screenDesc} onChange={e => setAllData({
+          ...allData,
+          screenDesc: e.target.value
+        })}/>
+      </div>
+
+      <div className={styles.formRow}>
+        <label className={styles.pipeLabel} htmlFor="screenDepth">Screen Depth: </label>
+        <input className={styles.infoInput} onBlur={(e) => allData.screenDepth ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} name="casingDepth" type="number" min={allData.casingDepth ? allData.casingDepth : 0} step="0.5" placeholder="Required" value={allData.screenDepth} onChange={e=>setAllData({
+            ...allData,
+            screenDepth: e.target.value,
+          })}/>
+      </div>
+
       
-      <GraphicalBoringLog
+
+      {materials()}
+      
+      {/* <GraphicalBoringLog
         allData={allData}
         subLayers={subLayers}
         depthTotal={depthTotal}
-      />
+      /> */}
     </div>
   )
 }

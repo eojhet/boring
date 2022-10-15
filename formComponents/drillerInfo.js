@@ -1,11 +1,10 @@
 import styles from '/styles/Home.module.scss'
 import { useState, useRef, useEffect } from 'react';
-import GraphicalBoringLog from './graphicalBoringLog';
 import BoringLog from './boringLog';
+import ConstructionLog from './constructionlog';
 
 export default function DrillerInfo({}) {
-  const infoRef = useRef(null);
-
+  const [boringInput, setBoringInput] = useState(false);
   const [allData, setAllData] = useState({
     id: "",
     location: "",
@@ -18,11 +17,26 @@ export default function DrillerInfo({}) {
     depths: [],
     types: [],
     descriptions: [],
+    standupHeight: "0",
+    casing: true,
+    casingDepth: "",
+    casingDesc: "Two-inch solid PVC",
+    screenDepth: "",
+    screenDesc: "Two-inch slotted PVC",
+    materialDepths: [],
+    materialTypes: [],
+    materialDescriptions: [],
   });
+
+  const infoRef = useRef(null);
+
+  useEffect(() => {
+    infoRef.current.querySelector('input[name=label]').focus();
+  },[])
 
   return (
     <div>
-      <form ref={infoRef} className={styles.form}>
+      <div ref={infoRef} className={styles.form}>
         <div><h2>Basic Info: </h2></div>
 
         <div className={styles.formRow}>
@@ -89,13 +103,24 @@ export default function DrillerInfo({}) {
           })}/>
         </div>
 
-      </form>
+        <button onClick={e => {
+          e.preventDefault();
+          setBoringInput(!boringInput);
+        }}>Switch</button>
 
+      </div>
+
+      {boringInput ? 
       <BoringLog 
         allData={allData}
         setAllData={setAllData}
         infoRef={infoRef}
-      />
+      /> : 
+      <ConstructionLog 
+        allData={allData}
+        setAllData={setAllData}
+        infoRef={infoRef}
+      />}
             
     </div>
   );
