@@ -35,7 +35,7 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
       let tempAllData = {...allData};
       tempAllData.materialDepths[subLayers - 1] ? tempAllData.materialDepths.pop() : null;
       tempAllData.materialTypes[subLayers - 1] ? tempAllData.materialTypes.pop() : null;
-      tempAllData.materialDescriptions.pop();
+      tempAllData.materialDescriptions[subLayers - 1] ? tempAllData.materialDescriptions.pop() : null;
       setAllData({
         ...tempAllData,
       });
