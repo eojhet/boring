@@ -17,14 +17,14 @@ export default function DrillerInfo({}) {
     depths: [],
     types: [],
     descriptions: [],
-    standupHeight: "2", //test
-    casingDepth: "5", //test
+    standupHeight: "", //test
+    casingDepth: "", //test
     casingDesc: "Two-inch solid PVC",
-    screenDepth: "4.5", //test
+    screenDepth: "", //test
     screenDesc: "Two-inch slotted PVC",
-    materialDepths: ["0.5","1","10"], //test
-    materialTypes: ["backFill","seal","filterPack"], //test
-    materialDescriptions: ["Topsoil", "Medium Bentonite Chips", "No. 2 Gravel Pack"], //test
+    materialDepths: [], //test
+    materialTypes: [], //test
+    materialDescriptions: [], //test
   });
 
   const infoRef = useRef(null);
