@@ -1,6 +1,3 @@
-import { useState } from "react"
-
-
 export default function GraphicalConstructionLog({allData, subLayers, depthTotal}) {
   const layerDepthInfo = [];
   const layerDepthGraphic = [];
@@ -91,13 +88,11 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
             .materialDepth{
               width: 5rem;
               border-top: 1px dotted #eaeaea;
-              text-align: right;
-              padding-right: 1rem;
+              padding-left: 1rem;
             }
             .materialType{
               width: 5rem;
               border-top: 1px dotted #eaeaea;
-              text-align: right;
               padding-right: 1rem;
             }
             .materialDesc{
@@ -205,8 +200,8 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
           height: ${allData.standupHeight*3}rem;
           width: 4rem;
           border-top: 1px dotted #eaeaea;
-          text-align: right;
           padding-right: 1rem;
+          padding-left: 0.1rem;
         }
         .wellString {
           display: flex;
@@ -238,15 +233,15 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
           height: ${allData.casingDepth*3}rem;
           width: 4rem;
           border-top: 1px dotted #eaeaea;
-          text-align: right;
           padding-right: 1rem;
+          padding-left: 0.1rem;
         }
         .screenDepth{
           height: ${(allData.screenDepth - allData.casingDepth)*3}rem;
           width: 4rem;
           border-top: 1px dotted #eaeaea;
-          text-align: right;
           padding-right: 1rem;
+          padding-left: 0.1rem;
         }
         .casingBox {
           width: 2rem;
