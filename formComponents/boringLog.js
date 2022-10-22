@@ -101,7 +101,7 @@ export default function BoringLog({allData, setAllData, infoRef, boringSubLayers
   
   const checkDocument = () => {
     // console.log(JSON.stringify({...allData}));
-    
+
     crawl();
   
     if ((allData.types.length !== allData.depths.length) || (allData.descriptions.length > allData.depths.length)){
@@ -111,12 +111,12 @@ export default function BoringLog({allData, setAllData, infoRef, boringSubLayers
       setAlert("Ensure that Boring ID and Location fields are filled out.");
       return false;
     } else {
-      for (let i = 0; i < allData.depths.length - 1; i++) {
+      for (let i = 0; i < allData.depths.length; i++) {
         if (parseFloat(allData.depths[i]) >= parseFloat(allData.depths[i+1])){
           setAlert("Check each layer depth is deeper than the one before it.");
           return false;
         }
-        if (allData.depths[i] === "" || allData.types[i] === "") {
+        if (allData.depths[i] == "" || allData.types[i] == "") {
           setAlert("Ensure that all boring depth and soil type fields are filled out.");
           return false;
         }
@@ -130,12 +130,16 @@ export default function BoringLog({allData, setAllData, infoRef, boringSubLayers
     const layerDepths = boringRef.current.querySelectorAll('input[name=layerDepth]');
     const layerTypes = boringRef.current.querySelectorAll('select[name=layerType]');
 
-    infoRef.current.querySelector('input[name=label]').focus();
-    infoRef.current.querySelector('input[name=location]').focus();
-    
     for (let i = 0; i < layerDepths.length; i++) {
       layerTypes[i].focus();
       layerDepths[i].focus();
+    }
+
+    if (allData.id == "") {
+      infoRef.current.querySelector('input[name=label]').focus();
+    }
+    if (allData.location == "") {
+      infoRef.current.querySelector('input[name=location]').focus();
     }
   }
 
