@@ -105,7 +105,7 @@ export default function ConstructionLog({allData, setAllData, infoRef, construct
 
   
   const checkDocument = () => {
-    console.log(JSON.stringify({...allData}));
+    // console.log(JSON.stringify({...allData}));
     
     crawl();
   
@@ -115,10 +115,17 @@ export default function ConstructionLog({allData, setAllData, infoRef, construct
     } else if (!allData.id || !allData.location){
       setAlert("Ensure that Boring ID and Location fields are filled out.");
       return false;
+    } else if (parseFloat(allData.screenDepth) > parseFloat(allData.materialDepths[allData.materialDepths.length-1])) {
+      setAlert("Boring should be at least as deep as screen");
+      return false;
     } else {
-      for (let i = 0; i < allData.materialDepths.length - 1; i++) {
+      for (let i = 0; i < allData.materialDepths.length; i++) {
         if (parseFloat(allData.materialDepths[i]) >= parseFloat(allData.materialDepths[i+1])){
           setAlert("Check each layer depth is deeper than the one before it.");
+          return false;
+        }
+        if (allData.materialDepths[i] == "" || allData.materialTypes[i] == "") {
+          setAlert("Ensure that all boring depth and soil type fields are filled out.");
           return false;
         }
       }
@@ -130,13 +137,17 @@ export default function ConstructionLog({allData, setAllData, infoRef, construct
   const crawl = () => {
     const layerDepths = boringRef.current.querySelectorAll('input[name=materialDepth]');
     const layerTypes = boringRef.current.querySelectorAll('select[name=materialType]');
-
-    infoRef.current.querySelector('input[name=label]').focus();
-    infoRef.current.querySelector('input[name=location]').focus();
     
     for (let i = 0; i < layerDepths.length; i++) {
       layerTypes[i].focus();
       layerDepths[i].focus();
+    }
+
+    if (allData.id == "") {
+      infoRef.current.querySelector('input[name=label]').focus();
+    }
+    if (allData.location == "") {
+      infoRef.current.querySelector('input[name=location]').focus();
     }
   }
 
