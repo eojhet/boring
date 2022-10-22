@@ -131,7 +131,7 @@ export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
           width: 25rem;
         }
 
-        @media only screen and (max-width: 700px) {
+        @media only screen and (max-width: 600px) {
           .bottomRight {
             width: calc(100vw - 11rem);
           }

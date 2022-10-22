@@ -42,7 +42,7 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
                 flex-direction:row;
               }
             .materialBox{
-              width: 2rem;
+              width: 1.4rem;
               height: ${(i > 0 ? allData.materialDepths[i] - allData.materialDepths[i-1] : allData.materialDepths[i])*3}rem;
               border-top: 1px solid #eaeaea;
               border-bottom: 1px solid #eaeaea;
@@ -122,7 +122,14 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
         {/* Well Construction Info Panel */}
         <div className="wellString">
 
-          {allData.standupHeight > 0 && <div className="standupBoxPadding"/>}
+          {allData.standupHeight > 0 && 
+          <div className="wellStringSegment">
+            <div className="stringDesc">{allData.casingDesc}</div>
+            <div className="stringType">Standup</div>
+            <div className="standupHeight">0 - {allData.standupHeight}</div>
+          </div>
+          
+          }
           
           {allData.casingDepth > 0 && 
           <div className="wellStringSegment">
@@ -185,14 +192,21 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
           display: flex;
           flex-direction: row;
         }
+        .standupBoxPadding {
+          height: ${allData.standupHeight*3}rem;
+        }
         .stickupBox {
           width: 2rem;
           height: ${allData.standupHeight*3}rem;
           border: 1px solid #eaeaea;
           background-color: #eee;
         }
-        .standupBoxPadding {
+        .standupHeight {
           height: ${allData.standupHeight*3}rem;
+          width: 4rem;
+          border-top: 1px dotted #eaeaea;
+          text-align: right;
+          padding-right: 1rem;
         }
         .wellString {
           display: flex;
@@ -217,19 +231,19 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
         .stringType{
           width: 4rem;
           border-top: 1px dotted #eaeaea;
-          text-align: right;
+          text-align: left;
           padding-right: 1rem;
         }
         .casingDepth{
           height: ${allData.casingDepth*3}rem;
-          width: 5rem;
+          width: 4rem;
           border-top: 1px dotted #eaeaea;
           text-align: right;
           padding-right: 1rem;
         }
         .screenDepth{
           height: ${(allData.screenDepth - allData.casingDepth)*3}rem;
-          width: 5rem;
+          width: 4rem;
           border-top: 1px dotted #eaeaea;
           text-align: right;
           padding-right: 1rem;
@@ -239,14 +253,16 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
           height: ${allData.casingDepth*3}rem;
           text-align: center;
           border: 1px solid #eaeaea;
-          background-color: #ccc;
+          background-color: #eee;
         }
         .screenBox {
           width: 2rem;
           height: ${(allData.screenDepth - allData.casingDepth)*3}rem;
           text-align: center;
           border: 1px solid #eaeaea;
-          background-color: #aaa;
+          background-color: #ccc;
+          background-image: ${"url(patterns/screen.svg)"};
+          background-repeat: repeat;
         }
         .afterWellBox {
           height: ${(allData.materialDepths[allData.materialDepths.length - 1] - allData.screenDepth)*3}rem;
@@ -277,13 +293,13 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
     <div className="container">
 
       {segment()}
-      {/* <div className="bottom">
+      <div className="bottom">
         <div className="bottomLeft" />
         <div className="logDepth">
-          {allData.materialDepths.length > 0 ? allData.materialDepths[allData.materialDepths.length-1] + ' ft' : ''}
+          {allData.materialDepths.length > 0 ? allData.materialDepths[allData.materialDepths.length-1] + ' ft T.D.' : ''}
         </div>
         <div className="bottomRight">&nbsp;</div>
-      </div>       */}
+      </div>      
       <style jsx>{`
         .container {
           margin: 1rem 0 4rem 0;
@@ -300,7 +316,7 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
 
         }
         .bottomLeft {
-          width: 4rem;
+          width: 16rem;
         }
         .logDepth {
           width: 6rem;
@@ -310,9 +326,12 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
           width: 25rem;
         }
 
-        @media only screen and (max-width: 700px) {
+        @media only screen and (max-width: 600px) {
+          .bottomLeft {
+            width: 8rem;
+          }
           .bottomRight {
-            width: calc(100vw - 11rem);
+            width: 10rem;
           }
         }
       `}</style>

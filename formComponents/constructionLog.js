@@ -2,11 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import GraphicalConstructionLog from "./graphicalConstructionLog";
 import styles from '/styles/Home.module.scss'
 
-export default function ConstructionLog({allData, setAllData, infoRef}) {
-  const [subLayers, setSubLayers] = useState(1);
+export default function ConstructionLog({allData, setAllData, infoRef, constructionSubLayers, setConstructionSubLayers, constructionDepthTotal, setConstructionDepthTotal}) {
   const [alert, setAlert] = useState("");
-  const [depthTotal, setDepthTotal] = useState([0]);
-
   const boringRef = useRef(null);
   const initialRender = useRef(true);
 
@@ -20,30 +17,50 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
     } else {
       initialRender.current = false;
     }
-  }, [subLayers])
+  }, [constructionSubLayers])
 
   function newLayer(e) {
     e.preventDefault();
-    setSubLayers(subLayers + 1);
+    setConstructionSubLayers(constructionSubLayers + 1);
   }
 
   function delLayer(e) {
     e.preventDefault();
-    if (subLayers > 1) {
-      setSubLayers(subLayers - 1);
+    if (constructionSubLayers > 1) {
+      setConstructionSubLayers(constructionSubLayers - 1);
 
       let tempAllData = {...allData};
-      tempAllData.materialDepths[subLayers - 1] ? tempAllData.materialDepths.pop() : null;
-      tempAllData.materialTypes[subLayers - 1] ? tempAllData.materialTypes.pop() : null;
-      tempAllData.materialDescriptions[subLayers - 1] ? tempAllData.materialDescriptions.pop() : null;
+      tempAllData.materialDepths[constructionSubLayers - 1] ? tempAllData.materialDepths.pop() : null;
+      tempAllData.materialTypes[constructionSubLayers - 1] ? tempAllData.materialTypes.pop() : null;
+      tempAllData.materialDescriptions[constructionSubLayers - 1] ? tempAllData.materialDescriptions.pop() : null;
       setAllData({
         ...tempAllData,
       });
 
-      let tempDepthTotal = [...depthTotal];
+      let tempDepthTotal = [...constructionDepthTotal];
       tempDepthTotal.pop();
-      setDepthTotal(tempDepthTotal);
+      setConstructionDepthTotal(tempDepthTotal);
     }
+  }
+
+  const handleClear = (e) => {
+    e.preventDefault();
+    setAllData({
+      ...allData,
+      standupHeight: "",
+      casingDepth: "",
+      casingDesc: "Two-inch solid PVC",
+      screenDepth: "",
+      screenDesc: "Two-inch slotted PVC",
+      materialDepths: [],
+      materialTypes: [],
+      materialDescriptions: []
+    })
+    setConstructionSubLayers(1);
+    setConstructionDepthTotal([0]);
+    boringRef.current.querySelectorAll('input[name=materialDepth]')[0].value="";
+    boringRef.current.querySelectorAll('select[name=materialType]')[0].value="";
+    boringRef.current.querySelectorAll('textarea[name=materialDesc]')[0].value="";
   }
 
   function createPDF(e) {
@@ -52,7 +69,7 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
     if (checkDocument()) {
       fillEmpties();
 
-      fetch(`${process.env.NEXT_PUBLIC_API_URI}`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_CONSTRUCTION}`, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -167,11 +184,11 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
       ...allData,
       materialDepths: tempDepth
     })
-    let tempDepthTotal = [...depthTotal];
+    let tempDepthTotal = [...constructionDepthTotal];
     for (let i = index; i < allData.materialDepths.length; i++) {
       tempDepthTotal[i+1] = tempDepth[i];
     }
-    setDepthTotal(tempDepthTotal);
+    setConstructionDepthTotal(tempDepthTotal);
   }
 
   const updateDesc = index => e => {
@@ -185,7 +202,7 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
 
   function materials() {
     
-    for (let i = 0; i < subLayers; i++){
+    for (let i = 0; i < constructionSubLayers; i++){
 
       layerElements.push(
         <div key={i} className={styles.formRow}>
@@ -200,13 +217,13 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
             {/* DEPTH FROM */}
             <div className={styles.formCol}>
               <label className={styles.label}>From</label>
-              <label className={styles.center}>{i == 0 ? 0 : depthTotal[i]}</label>
+              <label className={styles.center}>{i == 0 ? 0 : constructionDepthTotal[i]}</label>
             </div>
 
             {/* DEPTH TO */}
             <div className={styles.formCol}>
               <label className={styles.label} htmlFor="materialDepth">To</label>
-              <input className={styles.depth} name="materialDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.materialDepths[i]} placeholder="required" 
+              <input className={styles.depth} name="materialDepth" type="number" min={constructionDepthTotal[i]} step="0.5" value={allData.materialDepths[i]} placeholder="required" 
                 onBlur={(e) => allData.materialDepths[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateDepth(i)}/>
             </div>
 
@@ -240,6 +257,7 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
         <div className={styles.buttonContainer}>
           <button onClick={newLayer}>New Row</button>
           <button onClick={delLayer}>Delete Row</button>
+          <button onClick={handleClear}>Clear Log</button>
           <button onClick={createPDF}>Create PDF</button>
         </div>
         <div><b>{alert}</b></div>
@@ -297,8 +315,8 @@ export default function ConstructionLog({allData, setAllData, infoRef}) {
       
       <GraphicalConstructionLog
         allData={allData}
-        subLayers={subLayers}
-        depthTotal={depthTotal}
+        subLayers={constructionSubLayers}
+        depthTotal={constructionDepthTotal}
       />
     </div>
   )

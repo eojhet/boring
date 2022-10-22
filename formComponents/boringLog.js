@@ -2,11 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import GraphicalBoringLog from "./graphicalBoringLog";
 import styles from '/styles/Home.module.scss'
 
-export default function BoringLog({allData, setAllData, infoRef}) {
-  const [subLayers, setSubLayers] = useState(1);
+export default function BoringLog({allData, setAllData, infoRef, boringSubLayers, setBoringSubLayers, boringDepthTotal, setBoringDepthTotal}) {
   const [alert, setAlert] = useState("");
-  const [depthTotal, setDepthTotal] = useState([0]);
-
   const boringRef = useRef(null);
   const initialRender = useRef(true);
 
@@ -20,30 +17,45 @@ export default function BoringLog({allData, setAllData, infoRef}) {
     } else {
       initialRender.current = false;
     }
-  }, [subLayers])
+  }, [boringSubLayers])
 
   function newLayer(e) {
     e.preventDefault();
-    setSubLayers(subLayers + 1);
+    setBoringSubLayers(boringSubLayers + 1);
   }
 
   function delLayer(e) {
     e.preventDefault();
-    if (subLayers > 1) {
-      setSubLayers(subLayers - 1);
+    if (boringSubLayers > 1) {
+      setBoringSubLayers(boringSubLayers - 1);
 
       let tempAllData = {...allData};
-      tempAllData.depths[subLayers - 1] ? tempAllData.depths.pop() : null;
-      tempAllData.types[subLayers - 1] ? tempAllData.types.pop() : null;
+      tempAllData.depths[boringSubLayers - 1] ? tempAllData.depths.pop() : null;
+      tempAllData.types[boringSubLayers - 1] ? tempAllData.types.pop() : null;
       tempAllData.descriptions.pop();
       setAllData({
         ...tempAllData,
       });
 
-      let tempDepthTotal = [...depthTotal];
+      let tempDepthTotal = [...boringDepthTotal];
       tempDepthTotal.pop();
-      setDepthTotal(tempDepthTotal);
+      setBoringDepthTotal(tempDepthTotal);
     }
+  }
+
+  const handleClear = (e) => {
+    e.preventDefault();
+    setAllData({
+      ...allData,
+      depths: [],
+      types: [],
+      descriptions: [],
+    })
+    setBoringSubLayers(1);
+    setBoringDepthTotal([0]);
+    boringRef.current.querySelectorAll('input[name=layerDepth]')[0].value="";
+    boringRef.current.querySelectorAll('select[name=layerType]')[0].value="";
+    boringRef.current.querySelectorAll('textarea[name=layerDesc]')[0].value="";
   }
 
   function createPDF(e) {
@@ -52,7 +64,7 @@ export default function BoringLog({allData, setAllData, infoRef}) {
     if (checkDocument()) {
       fillEmpties();
 
-      fetch(`${process.env.NEXT_PUBLIC_API_URI}`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_BORING}`, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -88,7 +100,7 @@ export default function BoringLog({allData, setAllData, infoRef}) {
 
   
   const checkDocument = () => {
-    console.log(JSON.stringify({...allData}));
+    // console.log(JSON.stringify({...allData}));
     
     crawl();
   
@@ -102,6 +114,10 @@ export default function BoringLog({allData, setAllData, infoRef}) {
       for (let i = 0; i < allData.depths.length - 1; i++) {
         if (parseFloat(allData.depths[i]) >= parseFloat(allData.depths[i+1])){
           setAlert("Check each layer depth is deeper than the one before it.");
+          return false;
+        }
+        if (allData.depths[i] === "" || allData.types[i] === "") {
+          setAlert("Ensure that all boring depth and soil type fields are filled out.");
           return false;
         }
       }
@@ -167,11 +183,11 @@ export default function BoringLog({allData, setAllData, infoRef}) {
       ...allData,
       depths: tempDepth
     })
-    let tempDepthTotal = [...depthTotal];
+    let tempDepthTotal = [...boringDepthTotal];
     for (let i = index; i < allData.depths.length; i++) {
       tempDepthTotal[i+1] = tempDepth[i];
     }
-    setDepthTotal(tempDepthTotal);
+    setBoringDepthTotal(tempDepthTotal);
   }
 
   const updateDesc = index => e => {
@@ -185,7 +201,7 @@ export default function BoringLog({allData, setAllData, infoRef}) {
 
   function subSurface() {
     
-    for (let i = 0; i < subLayers; i++){
+    for (let i = 0; i < boringSubLayers; i++){
 
       layerElements.push(
         <div key={i} className={styles.formRow}>
@@ -200,13 +216,13 @@ export default function BoringLog({allData, setAllData, infoRef}) {
             {/* DEPTH FROM */}
             <div className={styles.formCol}>
               <label className={styles.label}>From</label>
-              <label className={styles.center}>{i == 0 ? 0 : depthTotal[i]}</label>
+              <label className={styles.center}>{i == 0 ? 0 : boringDepthTotal[i]}</label>
             </div>
 
             {/* DEPTH TO */}
             <div className={styles.formCol}>
               <label className={styles.label} htmlFor="layerDepth">To</label>
-              <input className={styles.depth} name="layerDepth" type="number" min={depthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
+              <input className={styles.depth} name="layerDepth" type="number" min={boringDepthTotal[i]} step="0.5" value={allData.depths[i]} placeholder="required" 
                 onBlur={(e) => allData.depths[i] ? e.target.style.border="1px solid #333" : e.target.style.border="3px solid red"} onChange={updateDepth(i)}/>
             </div>
 
@@ -251,6 +267,7 @@ export default function BoringLog({allData, setAllData, infoRef}) {
         <div className={styles.buttonContainer}>
           <button onClick={newLayer}>New Row</button>
           <button onClick={delLayer}>Delete Row</button>
+          <button onClick={handleClear}>Clear Log</button>
           <button onClick={createPDF}>Create PDF</button>
         </div>
         <div><b>{alert}</b></div>
@@ -264,8 +281,8 @@ export default function BoringLog({allData, setAllData, infoRef}) {
       
       <GraphicalBoringLog
         allData={allData}
-        subLayers={subLayers}
-        depthTotal={depthTotal}
+        subLayers={boringSubLayers}
+        depthTotal={boringDepthTotal}
       />
     </div>
   )

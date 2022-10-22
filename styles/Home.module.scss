@@ -22,8 +22,8 @@ $cardTxtColor: #111;
       border-top-right-radius: 12px;
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 4px;       
-      margin: 0.5rem;
-      padding: 0.4rem;
+      margin: 0.25rem 0.5rem;
+      padding: 0.2rem 0.6rem;
       // box-shadow: 4px 4px 1px #333;
       box-shadow: 4px 4px 0 #999;
       background-color: #eee;
@@ -158,6 +158,11 @@ $cardTxtColor: #111;
 @media only screen and (max-width: 600px) {
   .container {
     .main {
+      button {
+        padding: 0.2rem;
+        margin: 0.25rem;
+      }
+
       .form {
         align-items: stretch;
   
