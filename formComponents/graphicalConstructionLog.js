@@ -27,7 +27,18 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
       layerDepthGraphic.pop();
     }
 
+    let difference = 0;
+
     for (let i = 0; i < allData.materialDepths.length; i++) {
+      let layerBaseHeight = i > 0 ? allData.materialDepths[i] - allData.materialDepths[i-1] : allData.materialDepths[i];
+
+      if (layerBaseHeight < 0.5) {
+        difference += 0.5 - layerBaseHeight;
+        layerBaseHeight = 0.5;
+      } else if ((layerBaseHeight - difference) > 0.5){
+        layerBaseHeight -= difference;
+      }
+      
       layerDepthGraphic.push(
         <div key={i}>
           <div className="segment">
@@ -40,7 +51,7 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
               }
             .materialBox{
               width: 1.4rem;
-              height: ${(i > 0 ? allData.materialDepths[i] - allData.materialDepths[i-1] : allData.materialDepths[i])*3}rem;
+              height: ${layerBaseHeight*3}rem;
               border-top: 1px solid #eaeaea;
               border-bottom: 1px solid #eaeaea;
               text-align: center;
@@ -72,6 +83,13 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
     }
     
     for (let i = 0; i < allData.materialDepths.length; i++) {
+
+      let layerBaseHeight = i > 0 ? allData.materialDepths[i] - allData.materialDepths[i-1] : allData.materialDepths[i];
+
+      if (layerBaseHeight < 0.5) {
+        layerBaseHeight = 0.5;
+      }
+
       layerDepthInfo.push(
         <div key={i}>
           <div className="segment">
@@ -83,10 +101,10 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
             .segment{
                 display:flex;
                 flex-direction:row;
-                height: ${(i > 0 ? allData.materialDepths[i] - allData.materialDepths[i-1] : allData.materialDepths[i])*3}rem;
+                height: ${layerBaseHeight*3}rem;
               }
             .materialDepth{
-              width: 5rem;
+              width: 5.5rem;
               border-top: 1px dotted #eaeaea;
               padding-left: 1rem;
             }
@@ -119,7 +137,7 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
 
           {allData.standupHeight > 0 && 
           <div className="wellStringSegment">
-            <div className="stringDesc">{allData.casingDesc}</div>
+            <div className="stringDesc"></div>
             <div className="stringType">Standup</div>
             <div className="standupHeight">0 - {allData.standupHeight}</div>
           </div>
@@ -188,17 +206,17 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
           flex-direction: row;
         }
         .standupBoxPadding {
-          height: ${allData.standupHeight*3}rem;
+          height: ${(allData.standupHeight > 0.5 ? allData.standupHeight : 0.5)*3}rem;
         }
         .stickupBox {
           width: 2rem;
-          height: ${allData.standupHeight*3}rem;
+          height: ${(allData.standupHeight > 0.5 ? allData.standupHeight : 0.5)*3}rem;
           border: 1px solid #eaeaea;
           background-color: #eee;
         }
         .standupHeight {
-          height: ${allData.standupHeight*3}rem;
-          width: 4rem;
+          height: ${(allData.standupHeight > 0.5 ? allData.standupHeight : 0.5)*3}rem;
+          width: 4.5rem;
           border-top: 1px dotted #eaeaea;
           padding-right: 1rem;
           padding-left: 0.1rem;
@@ -231,14 +249,14 @@ export default function GraphicalConstructionLog({allData, subLayers, depthTotal
         }
         .casingDepth{
           height: ${allData.casingDepth*3}rem;
-          width: 4rem;
+          width: 4.5rem;
           border-top: 1px dotted #eaeaea;
           padding-right: 1rem;
           padding-left: 0.1rem;
         }
         .screenDepth{
           height: ${(allData.screenDepth - allData.casingDepth)*3}rem;
-          width: 4rem;
+          width: 4.5rem;
           border-top: 1px dotted #eaeaea;
           padding-right: 1rem;
           padding-left: 0.1rem;

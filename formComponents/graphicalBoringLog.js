@@ -42,6 +42,14 @@ export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
     }
     
     for (let i = 0; i < allData.depths.length; i++) {
+      let layerBaseHeight;
+
+      if (i > 0) {
+        layerBaseHeight = allData.depths[i] - allData.depths[i-1] > 0.5 ? allData.depths[i] - allData.depths[i-1] : 0.5;
+      } else {
+        layerBaseHeight = allData.depths[i] > 0.5 ? allData.depths[i] : 0.5;
+      }
+      
       layerDepth.push(
         <div key={i}>
           <div className="segment">
@@ -65,7 +73,7 @@ export default function GraphicalBoringLog({allData, subLayers, depthTotal}) {
             }
             .box{
               width: 6rem;
-              height: ${(i > 0 ? allData.depths[i] - allData.depths[i-1] : allData.depths[i])*3}rem;
+              height: ${layerBaseHeight*3}rem;
               background-color: ${layerColors[allData.types[i]]};
               border: 1px solid #eaeaea;
               text-align: center;
