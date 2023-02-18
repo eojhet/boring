@@ -9,7 +9,7 @@ export default function DrillerInfo({}) {
   const [constructionSubLayers, setConstructionSubLayers] = useState(1);
   const [boringDepthTotal, setBoringDepthTotal] = useState([0]);
   const [constructionDepthTotal, setConstructionDepthTotal] = useState([0]);
-
+  const [saveLoad, setSaveLoad] = useState();
 
   const [allData, setAllData] = useState({
     id: "",
@@ -32,6 +32,27 @@ export default function DrillerInfo({}) {
     materialTypes: [],
     materialDescriptions: [],
   });
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    setSaveLoad(JSON.stringify(allData));
+  }
+
+  const handleLoad = (e) => {
+    e.preventDefault();
+
+    try {
+      const newAllData = JSON.parse(saveLoad);
+      setAllData({...newAllData});
+      setBoringSubLayers(newAllData.depths.length);
+      setConstructionSubLayers(newAllData.materialDepths.length);
+      setBoringDepthTotal([0].concat(newAllData.depths));
+      setConstructionDepthTotal([0].concat(newAllData.materialDepths));
+    } catch (error) {
+      setSaveLoad("Nope");
+    }
+
+  }
 
   const handleDemo = (e) => {
     e.preventDefault();
@@ -159,6 +180,11 @@ export default function DrillerInfo({}) {
           }}>{boringInput ? "Well Construction" : "Boring Log"}</button>
           <button onClick={handleClear}>Clear Info</button>
           <button onClick={handleDemo}>DEMO</button>
+          <button onClick={handleSave}>SAVE</button>
+          <button onClick={handleLoad}>LOAD</button>
+        </div>
+        <div>
+          <input name="saveLoad" type="text" value={saveLoad} onChange={e=>setSaveLoad(e.target.value)} />
         </div>
       </div>
 
