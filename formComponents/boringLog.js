@@ -12,8 +12,14 @@ export default function BoringLog({allData, setAllData, infoRef, boringSubLayers
   useEffect(() => {
     // Prevent effect from firing on initial render
     if (!initialRender.current) {
-      let depthArray = boringRef.current.querySelectorAll('input[name=layerDepth]');
-      depthArray[depthArray.length - 1].focus();
+
+      try {
+        let depthArray = boringRef.current.querySelectorAll('input[name=layerDepth]');
+        depthArray[depthArray.length - 1].focus();
+      } catch (error) {
+        setBoringSubLayers(1);
+      }
+
     } else {
       initialRender.current = false;
     }

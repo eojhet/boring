@@ -12,8 +12,14 @@ export default function ConstructionLog({allData, setAllData, infoRef, construct
   useEffect(() => {
     // Prevent effect from firing on initial render
     if (!initialRender.current) {
-      let depthArray = boringRef.current.querySelectorAll('input[name=materialDepth]');
-      depthArray[depthArray.length - 1].focus();
+
+      try {
+        let depthArray = boringRef.current.querySelectorAll('input[name=materialDepth]');
+        depthArray[depthArray.length - 1].focus();
+      } catch (error){
+        setConstructionSubLayers(1);
+      }
+        
     } else {
       initialRender.current = false;
     }
